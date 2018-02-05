@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Alessandro Gasparini" />
+
+<meta name="date" content="2018-02-01" />
+
+<title>Introduction to rsimsum</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Introduction to rsimsum</h1>
+<h4 class="author"><em>Alessandro Gasparini</em></h4>
+<h4 class="date"><em>2018-02-01</em></h4>
+
+
+
+<div id="rsimsum" class="section level1">
+<h1>rsimsum</h1>
+<p><code>rsimsum</code> is an R package that can compute summary statistics from simulation studies. It is a port to R of the user-written command <code>simsum</code> in Stata (White I.R., 2010).</p>
+<p>The aim of <code>rsimsum</code> is helping reporting of simulation studies, including understanding the role of chance in results of simulation studies. Specifically, <code>rsimsum</code> can compute Monte Carlo standard errors of summary statistics, defined as the standard deviation of the estimated summary statistic.</p>
+<p>Formula for summary statistics and Monte Carlo standard errors are presented in the next section.</p>
+</div>
+<div id="notation" class="section level1">
+<h1>Notation</h1>
+<p>We will use th following notation throughout this vignette:</p>
+<ul>
+<li><span class="math inline">\(\theta\)</span>: an estimand, and its true value</li>
+<li><span class="math inline">\(n_{\text{sim}}\)</span>: number of simulations</li>
+<li><span class="math inline">\(i = 1, \dots, n_{\text{sim}}\)</span>: indexes a given simulation</li>
+<li><span class="math inline">\(\hat{\theta}_i\)</span>: the estimated value of <span class="math inline">\(\theta\)</span> for the <span class="math inline">\(i^{\text{th}}\)</span> replication</li>
+<li><span class="math inline">\(\widehat{\text{Var}}(\hat{\theta}_i)\)</span>: the estimated variance <span class="math inline">\(\text{Var}(\hat{\theta}_i)\)</span> of <span class="math inline">\(\hat{\theta}_i\)</span> for the <span class="math inline">\(i^{\text{th}}\)</span> replication</li>
+<li><span class="math inline">\(\text{Var}(\hat{\theta})\)</span>: the empirical variance of <span class="math inline">\(\hat{\theta}\)</span></li>
+<li><span class="math inline">\(\alpha\)</span>: the nominal significance level</li>
+</ul>
+</div>
+<div id="summary-statistics" class="section level1">
+<h1>Summary statistics</h1>
+<p>The first summary statistic of interest is <strong>bias</strong>, which quantifies whether the estimator targets the true value <span class="math inline">\(\theta\)</span> on average. Bias is calculated as:</p>
+<p><span class="math display">\[\text{Bias} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} \hat{\theta}_i - \theta\]</span></p>
+<p>The Monte Carlo standard error of bias is calculated as:</p>
+<p><span class="math display">\[\text{MCSE(Bias)} = \sqrt{\frac{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \bar{\theta}) ^ 2}{n_{\text{sim}}}}\]</span></p>
+<p>The <strong>empirical standard error</strong> of <span class="math inline">\(\theta\)</span> depends only on <span class="math inline">\(\hat{\theta}\)</span> and does not require any knowledge of <span class="math inline">\(\theta\)</span>. It estimates the standard deviation of <span class="math inline">\(\hat{\theta}\)</span> over the <span class="math inline">\(n_{\text{sim}}\)</span> replications:</p>
+<p><span class="math display">\[\text{Empirical SE} = \sqrt{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \bar{\theta}) ^ 2}\]</span></p>
+<p>The Monte Carlo standard error is calculated as:</p>
+<p><span class="math display">\[\text{MCSE(Emp. SE)} = \frac{\text{Emp. SE}}{\sqrt{2 (n_{\text{sim}} - 1)}}\]</span></p>
+<p>When comparing different methods, the <strong>relative precision of a given method B against a reference method A</strong> is computed as:</p>
+<p><span class="math display">\[\text{Relative % increase in precision} = \left( \frac{\text{Emp. SE}_A}{\text{Emp. SE}_B} \right) ^ 2\]</span></p>
+<p>Its (approximated) Monte Carlo standard error is:</p>
+<p><span class="math display">\[\text{MCSE(Relative % increase in precision)} \simeq 2 \frac{\text{Var}(\hat{\theta}_A)}{\text{Var}(\hat{\theta}_B)} \sqrt{\frac{1 - \rho^2_{AB}}{n_{\text{sim}} - 1}}\]</span></p>
+<p><span class="math inline">\(\rho^2_{AB}\)</span> is the correlation of <span class="math inline">\(\hat{\theta}_A\)</span> and <span class="math inline">\(\hat{\theta}_B\)</span>.</p>
+<p>A measure that takes into account both precision and accuracy of a method is the <strong>mean squared error</strong>, which is the sum of the squared bias and variance of <span class="math inline">\(\hat{\theta}\)</span>:</p>
+<p><span class="math display">\[\text{MSE} = \frac{1}{n_{\text{sim}}} = \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \theta) ^ 2\]</span></p>
+<p>The Monte Carlo standard error is:</p>
+<p><span class="math display">\[\text{MCSE(MSE)} = \sqrt{\frac{\sum_{i = 1} ^ {n_{\text{sim}}} \left[ (\hat{\theta}_i - \theta) ^2 - \text{MSE} \right] ^ 2}{n_{\text{sim}} (n_{\text{sim}} - 1)}}\]</span></p>
+<p>The <strong>model based standard error</strong> is computed by averaging the estimated standard errors for each replication:</p>
+<p><span class="math display">\[\text{Model SE} = \sqrt{\frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} \widehat{\text{Var}}(\hat{\theta}_i))}\]</span></p>
+<p>Its (approximated) Monte Carlo standard error is computed as:</p>
+<p><span class="math display">\[\text{MCSE(Model SE)} \simeq \sqrt{\frac{\text{Var}[\widehat{\text{Var}}(\hat{\theta}_i)]}{4 n_{\text{sim}} \widehat{\text{Model SE}}}}\]</span></p>
+<p>The model standard error targets the empirical standard error. Hence, the <strong>relative error in the model standard error</strong> is an informative performance measure:</p>
+<p><span class="math display">\[\text{Relative % error in model SE} = 100 \left( \frac{\text{Model SE}}{\text{Empirical SE}} - 1\right)\]</span></p>
+<p>Its Monte Carlo standard error is computed as:</p>
+<p><span class="math display">\[\text{MCSE(Relative % error in model SE)} = 100 \left( \frac{\text{Model SE}}{\text{Empirical SE}} \right) \sqrt{\frac{\text{Var}[\widehat{\text{Var}}(\hat{\theta}_i)]}{4 n_{\text{sim}} \widehat{\text{Model SE}} ^ 4} + \frac{1}{2(n_{\text{sim}} - 1)}}\]</span></p>
+<p><strong>Coverage</strong> is another key property of an estimator. It is defined as the probability that a confidence interval contains the true value <span class="math inline">\(\theta\)</span>, and computed as:</p>
+<p><span class="math display">\[\text{Coverage} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I(\hat{\theta}_{i, \text{low}} \le \theta \le \hat{\theta}_{i, \text{upp}})\]</span></p>
+<p>where <span class="math inline">\(I(\cdot)\)</span> is the indicator function. The Monte Carlo standard error is computed as:</p>
+<p><span class="math display">\[\text{MCSE(Coverage)} = \sqrt{\frac{\text{Coverage} \times (1 - \text{Coverage})}{n_{\text{sim}}}}\]</span></p>
+<p>Under coverage is to be expected if:</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(\text{Bias} \ne 0\)</span>, or</li>
+<li><span class="math inline">\(\text{Models SE} &lt; \text{Empirical SE}\)</span>, or</li>
+<li>the distribution of <span class="math inline">\(\hat{\theta}\)</span> is not normal and intervals have been constructed assuming normality, or</li>
+<li><span class="math inline">\(\widehat{\text{Var}}(\hat{\theta}_i)\)</span> is too variable</li>
+</ol>
+<p>Over coverage occurs as a result of <span class="math inline">\(\text{Models SE} &gt; \text{Empirical SE}\)</span>.</p>
+<p>As under coverage may be a result of bias, another useful summary statistic is <strong>bias corrected coverage</strong>:</p>
+<p><span class="math display">\[\text{Bias corrected coverage} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I(\hat{\theta}_{i, \text{low}} \le \bar{\theta} \le \hat{\theta}_{i, \text{upp}}) \]</span></p>
+<p>The Monte Carlo standard error is analogously as coverage:</p>
+<p><span class="math display">\[\text{MCSE(Bias corrected coverage)} = \sqrt{\frac{\text{Bias corrected coverage} \times (1 - \text{Bias corrected coverage})}{n_{\text{sim}}}}\]</span></p>
+<p>Finally, <strong>power</strong> of a significance test at the <span class="math inline">\(\alpha\)</span> level is defined as:</p>
+<p><span class="math display">\[\text{Power} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I \left[ |\hat{\theta}_i| \ge z_{\alpha/2} * \sqrt{\widehat{\text{Var}}(\hat{\theta_i})} \right]\]</span></p>
+<p>The Monte Carlo standard error is analogously as coverage:</p>
+<p><span class="math display">\[\text{MCSE(Power)} = \sqrt{\frac{\text{Power} \times (1 - \text{Power})}{n_{\text{sim}}}}\]</span></p>
+<p>Further information on summary statistics for simulation studies can be found in White (2010) and Morris, White, and Crowther (2017).</p>
+</div>
+<div id="example-1-simulation-study-on-missing-data" class="section level1">
+<h1>Example 1: Simulation study on missing data</h1>
+<p>With this example dataset included in <code>rsimsum</code> we aim to summarise a simulation study comparing different ways to handle missing covariates when fitting a Cox model (White and Royston, 2009). One thousand datasets were simulated, each containing normally distributed covariates <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> and time-to-event outcome. Both covariates has <span class="math inline">\(20\%\)</span> of their values deleted independently of all other variables so the data became missing completely at random (Little and Rubin, 2002). Each simulated dataset was analysed in three ways. A Cox model was fit to the complete cases (<code>CC</code>). Then two methods of multiple imputation using chained equations (van Buuren, Boshuizen, and Knook, 1999) were used. The <code>MI_LOGT</code> method multiply imputes the missing values of <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> with the outcome included as <span class="math inline">\(\log(t)\)</span> and <span class="math inline">\(d\)</span>, where <span class="math inline">\(t\)</span> is the survival time and <span class="math inline">\(d\)</span> is the event indicator. The <code>MI_T</code> method is the same except that <span class="math inline">\(\log(t)\)</span> is replaced by <span class="math inline">\(t\)</span> in the imputation model.</p>
+<p>We load the data in the usual way:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rsimsum)
+<span class="kw">data</span>(<span class="st">&quot;MIsim&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</code></pre></div>
+<p>Let’s have a look at the first 10 rows of the dataset:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(MIsim, <span class="dt">n =</span> <span class="dv">10</span>)
+<span class="co">#&gt;    dataset  method         b        se</span>
+<span class="co">#&gt; 1        1      CC 0.7067682 0.1465100</span>
+<span class="co">#&gt; 2        1    MI_T 0.6841882 0.1255043</span>
+<span class="co">#&gt; 3        1 MI_LOGT 0.7124795 0.1410814</span>
+<span class="co">#&gt; 4        2      CC 0.3485008 0.1599879</span>
+<span class="co">#&gt; 5        2    MI_T 0.4060082 0.1409831</span>
+<span class="co">#&gt; 6        2 MI_LOGT 0.4287003 0.1358589</span>
+<span class="co">#&gt; 7        3      CC 0.6495075 0.1521568</span>
+<span class="co">#&gt; 8        3    MI_T 0.5028701 0.1300780</span>
+<span class="co">#&gt; 9        3 MI_LOGT 0.5604051 0.1168512</span>
+<span class="co">#&gt; 10       4      CC 0.4320534 0.1262853</span></code></pre></div>
+<p>The included variables are:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(MIsim)
+<span class="co">#&gt; Classes 'tbl_df', 'tbl' and 'data.frame':    3000 obs. of  4 variables:</span>
+<span class="co">#&gt;  $ dataset: num  1 1 1 2 2 2 3 3 3 4 ...</span>
+<span class="co">#&gt;  $ method : chr  &quot;CC&quot; &quot;MI_T&quot; &quot;MI_LOGT&quot; &quot;CC&quot; ...</span>
+<span class="co">#&gt;  $ b      : num  0.707 0.684 0.712 0.349 0.406 ...</span>
+<span class="co">#&gt;  $ se     : num  0.147 0.126 0.141 0.16 0.141 ...</span>
+<span class="co">#&gt;  - attr(*, &quot;label&quot;)= chr &quot;simsum example: data from a simulation study comparing 3 ways to handle missing&quot;</span></code></pre></div>
+<ul>
+<li><p><code>dataset</code>, the number of the simulated dataset;</p></li>
+<li><p><code>method</code>, the method used (<code>CC</code>, <code>MI_LOGT</code> or <code>MI_T</code>);</p></li>
+<li><p><code>b</code>, the point estimate;</p></li>
+<li><p><code>se</code>, the standard error of the point estimate.</p></li>
+</ul>
+<p>We summarise the results of the simulation study by method using the <code>simsum</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s1 &lt;-<span class="st"> </span><span class="kw">simsum</span>(<span class="dt">data =</span> MIsim, <span class="dt">estvarname =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">true =</span> <span class="fl">0.50</span>, <span class="dt">se =</span> <span class="st">&quot;se&quot;</span>, <span class="dt">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;CC&quot;</span>)</code></pre></div>
+<p>Using the default settings, Monte Carlo standard errors are computed and returned.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ss1 &lt;-<span class="st"> </span><span class="kw">summary</span>(s1)
+ss1
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt;  simsum(data = MIsim, estvarname = &quot;b&quot;, true = 0.5, se = &quot;se&quot;, </span>
+<span class="co">#&gt;     methodvar = &quot;method&quot;, ref = &quot;CC&quot;)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Method variable: method </span>
+<span class="co">#&gt;  Unique methods: CC, MI_LOGT, MI_T </span>
+<span class="co">#&gt;  Reference method: CC </span>
+<span class="co">#&gt; By factors: none</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Summary statistics:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = CC </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate    0.5168     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate    0.5070     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0216     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0211     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate    0.0168 0.0048    0.0074    0.0261</span>
+<span class="co">#&gt;                    Empirical standard error    0.1511 0.0034    0.1445    0.1577</span>
+<span class="co">#&gt;                          Mean squared error    0.0231 0.0011    0.0209    0.0253</span>
+<span class="co">#&gt;   % gain in precision relative to method CC    1.0000 0.0000    1.0000    1.0000</span>
+<span class="co">#&gt;                  Model-based standard error    0.1471 0.0005    0.1461    0.1481</span>
+<span class="co">#&gt;          Relative % error in standard error   -2.6594 2.2049   -6.9810    1.6622</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9430 0.0073    0.9286    0.9574</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9400 0.0075    0.9253    0.9547</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9460 0.0071    0.9320    0.9600</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = MI_LOGT </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate    0.5009     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate    0.4969     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0182     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0172     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate    0.0009 0.0042   -0.0073    0.0091</span>
+<span class="co">#&gt;                    Empirical standard error    0.1320 0.0030    0.1262    0.1378</span>
+<span class="co">#&gt;                          Mean squared error    0.0174 0.0009    0.0157    0.0191</span>
+<span class="co">#&gt;   % gain in precision relative to method CC    1.3105 0.0394    1.2333    1.3876</span>
+<span class="co">#&gt;                  Model-based standard error    0.1349 0.0006    0.1338    0.1361</span>
+<span class="co">#&gt;          Relative % error in standard error    2.2233 2.3318   -2.3469    6.7935</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9490 0.0070    0.9354    0.9626</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9490 0.0070    0.9354    0.9626</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9690 0.0055    0.9583    0.9797</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = MI_T </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate    0.4988     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate    0.4939     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0179     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0169     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0012 0.0043   -0.0095    0.0071</span>
+<span class="co">#&gt;                    Empirical standard error    0.1344 0.0030    0.1285    0.1403</span>
+<span class="co">#&gt;                          Mean squared error    0.0181 0.0009    0.0163    0.0198</span>
+<span class="co">#&gt;   % gain in precision relative to method CC    1.2637 0.0384    1.1884    1.3390</span>
+<span class="co">#&gt;                  Model-based standard error    0.1338 0.0006    0.1327    0.1350</span>
+<span class="co">#&gt;          Relative % error in standard error   -0.4412 2.2690   -4.8883    4.0059</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9430 0.0073    0.9286    0.9574</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9430 0.0073    0.9286    0.9574</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9630 0.0060    0.9513    0.9747</span></code></pre></div>
+<div id="tabulating-summary-statistics" class="section level2">
+<h2>Tabulating summary statistics</h2>
+<p>It is straightforward to produce a table of summary statistics for use in an R Markdown document:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)
+<span class="kw">kable</span>(<span class="kw">get_data</span>(ss1))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">stat</th>
+<th align="right">coef</th>
+<th align="right">mcse</th>
+<th align="left">method</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">nsim</td>
+<td align="right">1000.0000000</td>
+<td align="right">NA</td>
+<td align="left">CC</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">thetamean</td>
+<td align="right">0.5167662</td>
+<td align="right">NA</td>
+<td align="left">CC</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">thetamedian</td>
+<td align="right">0.5069935</td>
+<td align="right">NA</td>
+<td align="left">CC</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">se2mean</td>
+<td align="right">0.0216373</td>
+<td align="right">NA</td>
+<td align="left">CC</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">se2median</td>
+<td align="right">0.0211425</td>
+<td align="right">NA</td>
+<td align="left">CC</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">bias</td>
+<td align="right">0.0167662</td>
+<td align="right">0.0047787</td>
+<td align="left">CC</td>
+<td align="right">0.0074001</td>
+<td align="right">0.0261322</td>
+</tr>
+<tr class="odd">
+<td align="left">empse</td>
+<td align="right">0.1511150</td>
+<td align="right">0.0033807</td>
+<td align="left">CC</td>
+<td align="right">0.1444889</td>
+<td align="right">0.1577411</td>
+</tr>
+<tr class="even">
+<td align="left">mse</td>
+<td align="right">0.0230940</td>
+<td align="right">0.0011338</td>
+<td align="left">CC</td>
+<td align="right">0.0208717</td>
+<td align="right">0.0253163</td>
+</tr>
+<tr class="odd">
+<td align="left">relprec</td>
+<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="left">CC</td>
+<td align="right">1.0000000</td>
+<td align="right">1.0000000</td>
+</tr>
+<tr class="even">
+<td align="left">modelse</td>
+<td align="right">0.1470963</td>
+<td align="right">0.0005274</td>
+<td align="left">CC</td>
+<td align="right">0.1460626</td>
+<td align="right">0.1481300</td>
+</tr>
+<tr class="odd">
+<td align="left">relerror</td>
+<td align="right">-2.6593842</td>
+<td align="right">2.2049438</td>
+<td align="left">CC</td>
+<td align="right">-6.9809947</td>
+<td align="right">1.6622263</td>
+</tr>
+<tr class="even">
+<td align="left">cover</td>
+<td align="right">0.9430000</td>
+<td align="right">0.0073315</td>
+<td align="left">CC</td>
+<td align="right">0.9286305</td>
+<td align="right">0.9573695</td>
+</tr>
+<tr class="odd">
+<td align="left">bccover</td>
+<td align="right">0.9400000</td>
+<td align="right">0.0075100</td>
+<td align="left">CC</td>
+<td align="right">0.9252807</td>
+<td align="right">0.9547193</td>
+</tr>
+<tr class="even">
+<td align="left">power</td>
+<td align="right">0.9460000</td>
+<td align="right">0.0071473</td>
+<td align="left">CC</td>
+<td align="right">0.9319915</td>
+<td align="right">0.9600085</td>
+</tr>
+<tr class="odd">
+<td align="left">nsim</td>
+<td align="right">1000.0000000</td>
+<td align="right">NA</td>
+<td align="left">MI_LOGT</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">thetamean</td>
+<td align="right">0.5009231</td>
+<td align="right">NA</td>
+<td align="left">MI_LOGT</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">thetamedian</td>
+<td align="right">0.4969223</td>
+<td align="right">NA</td>
+<td align="left">MI_LOGT</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">se2mean</td>
+<td align="right">0.0182091</td>
+<td align="right">NA</td>
+<td align="left">MI_LOGT</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">se2median</td>
+<td align="right">0.0172157</td>
+<td align="right">NA</td>
+<td align="left">MI_LOGT</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">bias</td>
+<td align="right">0.0009231</td>
+<td align="right">0.0041744</td>
+<td align="left">MI_LOGT</td>
+<td align="right">-0.0072586</td>
+<td align="right">0.0091048</td>
+</tr>
+<tr class="odd">
+<td align="left">empse</td>
+<td align="right">0.1320064</td>
+<td align="right">0.0029532</td>
+<td align="left">MI_LOGT</td>
+<td align="right">0.1262182</td>
+<td align="right">0.1377947</td>
+</tr>
+<tr class="even">
+<td align="left">mse</td>
+<td align="right">0.0174091</td>
+<td align="right">0.0008813</td>
+<td align="left">MI_LOGT</td>
+<td align="right">0.0156818</td>
+<td align="right">0.0191364</td>
+</tr>
+<tr class="odd">
+<td align="left">relprec</td>
+<td align="right">1.3104634</td>
+<td align="right">0.0393747</td>
+<td align="left">MI_LOGT</td>
+<td align="right">1.2332904</td>
+<td align="right">1.3876365</td>
+</tr>
+<tr class="even">
+<td align="left">modelse</td>
+<td align="right">0.1349413</td>
+<td align="right">0.0006046</td>
+<td align="left">MI_LOGT</td>
+<td align="right">0.1337563</td>
+<td align="right">0.1361263</td>
+</tr>
+<tr class="odd">
+<td align="left">relerror</td>
+<td align="right">2.2232593</td>
+<td align="right">2.3317773</td>
+<td align="left">MI_LOGT</td>
+<td align="right">-2.3469401</td>
+<td align="right">6.7934588</td>
+</tr>
+<tr class="even">
+<td align="left">cover</td>
+<td align="right">0.9490000</td>
+<td align="right">0.0069569</td>
+<td align="left">MI_LOGT</td>
+<td align="right">0.9353647</td>
+<td align="right">0.9626353</td>
+</tr>
+<tr class="odd">
+<td align="left">bccover</td>
+<td align="right">0.9490000</td>
+<td align="right">0.0069569</td>
+<td align="left">MI_LOGT</td>
+<td align="right">0.9353647</td>
+<td align="right">0.9626353</td>
+</tr>
+<tr class="even">
+<td align="left">power</td>
+<td align="right">0.9690000</td>
+<td align="right">0.0054808</td>
+<td align="left">MI_LOGT</td>
+<td align="right">0.9582579</td>
+<td align="right">0.9797421</td>
+</tr>
+<tr class="odd">
+<td align="left">nsim</td>
+<td align="right">1000.0000000</td>
+<td align="right">NA</td>
+<td align="left">MI_T</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">thetamean</td>
+<td align="right">0.4988092</td>
+<td align="right">NA</td>
+<td align="left">MI_T</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">thetamedian</td>
+<td align="right">0.4939111</td>
+<td align="right">NA</td>
+<td align="left">MI_T</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">se2mean</td>
+<td align="right">0.0179117</td>
+<td align="right">NA</td>
+<td align="left">MI_T</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">se2median</td>
+<td align="right">0.0169319</td>
+<td align="right">NA</td>
+<td align="left">MI_T</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="left">bias</td>
+<td align="right">-0.0011908</td>
+<td align="right">0.0042510</td>
+<td align="left">MI_T</td>
+<td align="right">-0.0095226</td>
+<td align="right">0.0071409</td>
+</tr>
+<tr class="odd">
+<td align="left">empse</td>
+<td align="right">0.1344277</td>
+<td align="right">0.0030074</td>
+<td align="left">MI_T</td>
+<td align="right">0.1285333</td>
+<td align="right">0.1403221</td>
+</tr>
+<tr class="even">
+<td align="left">mse</td>
+<td align="right">0.0180542</td>
+<td align="right">0.0009112</td>
+<td align="left">MI_T</td>
+<td align="right">0.0162682</td>
+<td align="right">0.0198401</td>
+</tr>
+<tr class="odd">
+<td align="left">relprec</td>
+<td align="right">1.2636816</td>
+<td align="right">0.0384238</td>
+<td align="left">MI_T</td>
+<td align="right">1.1883724</td>
+<td align="right">1.3389909</td>
+</tr>
+<tr class="even">
+<td align="left">modelse</td>
+<td align="right">0.1338346</td>
+<td align="right">0.0005856</td>
+<td align="left">MI_T</td>
+<td align="right">0.1326867</td>
+<td align="right">0.1349824</td>
+</tr>
+<tr class="odd">
+<td align="left">relerror</td>
+<td align="right">-0.4412233</td>
+<td align="right">2.2689748</td>
+<td align="left">MI_T</td>
+<td align="right">-4.8883321</td>
+<td align="right">4.0058856</td>
+</tr>
+<tr class="even">
+<td align="left">cover</td>
+<td align="right">0.9430000</td>
+<td align="right">0.0073315</td>
+<td align="left">MI_T</td>
+<td align="right">0.9286305</td>
+<td align="right">0.9573695</td>
+</tr>
+<tr class="odd">
+<td align="left">bccover</td>
+<td align="right">0.9430000</td>
+<td align="right">0.0073315</td>
+<td align="left">MI_T</td>
+<td align="right">0.9286305</td>
+<td align="right">0.9573695</td>
+</tr>
+<tr class="even">
+<td align="left">power</td>
+<td align="right">0.9630000</td>
+<td align="right">0.0059692</td>
+<td align="left">MI_T</td>
+<td align="right">0.9513006</td>
+<td align="right">0.9746994</td>
+</tr>
+</tbody>
+</table>
+<p>Using <code>get_data()</code> in combination with R packages such as <a href="https://cran.r-project.org/package=xtable">xtable</a>, <a href="https://cran.r-project.org/package=kableExtra">kableExtra</a>, <a href="https://cran.r-project.org/package=tables">tables</a> can yield a variety of tables that should suit most purposes.</p>
+<p>More information on producing tables directly from R can be found in the <a href="https://CRAN.R-project.org/view=ReproducibleResearch">CRAN Task View on Reproducible Research</a>.</p>
+</div>
+<div id="plotting-summary-statistics" class="section level2">
+<h2>Plotting summary statistics</h2>
+<p>In this section, we show how to plot and compare summary statistics using the popular R package <a href="https://CRAN.R-project.org/package=ggplot2">ggplot</a>.</p>
+<p>Plotting bias by method with <span class="math inline">\(95\%\)</span> confidence intervals based on Monte Carlo standard errors:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(<span class="kw">get_data</span>(ss1, <span class="dt">sstat =</span> <span class="st">&quot;bias&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> method, <span class="dt">y =</span> coef, <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_errorbar</span>(<span class="dt">width =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span><span class="dv">3</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Method&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Bias&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAJACAMAAABSRCkEAAAA7VBMVEUAAAAAACsAAFUAK4AAVaorAAArACsrAFUrK4ArgNQzMzNNTU1NTWtNTYhNa6ZNiMRVAABVAFVVK4BVVVVVqqpVqtRVqv9rTU1rTWtrTYhra6ZriKZriMRrpuGAKwCAKyuAK1WAgFWA1P+ITU2ITWuITYiIa2uIiGuIiIiIiMSIxP+ma02ma4imiKampoimxKam4f+qVQCqVSuq1P+q///EiE3EiGvExIjE4abE/+HE///UgCvUqlXU/6rU///hpmvhpojh/8Th///r6+v/AAD/qlX/xIj/1ID/1Kr/4ab//6r//8T//9T//+H////O2NtJAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAPX0lEQVR4nO3dDXcUdxmG8QGCGrYFbDVtqqBA60uiFhS0JgqaQOKS5P/9P45772bzTrM8N8PcnL2uc2rGtJ08nud3ZmcWFrtGZNQNPQB92gGIrABEVgAiKwCRFYDIygN0h5a2DwPI+revbbff05tlT9f3eACyy54OQC19RdnTAailryh7OgC19BVlTweglr6i7OkA1NJXlD0dgFr6irKnA1BLX1H2dABq6SvKng5ALX1F2dMBqKWvKHs6ALX0FWVPB6CWvqLs6QDU0leUPR2AWvqKsqcDUEtfUfZ0AGrpK8qeDkAtfUXZ0wGopa8oezoAtfQVZU8HoJa+ouzpANTSV5Q93fIA6ip9gJ9rByA1PKAfKcLJOwOQAlA5ACkAlQOQAlA5ACkAlQOQAlA5ACkAlQOQAlA5ACkAlQOQAlA5ACkAlQOQAlA5ACkAlQOQAlA5ACkT0G6vdf2enoy4AtlxBVIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFIAKgcgBaByAFLX7ejgyejuztmj8Vej0cbFs/QUgIwyAB1tbrRX984cHXz7tI2/fnrhLD0FIKMMQAffbbXx+tbp0Z40vZhfggCUWwag8Tc704vO2aPjL3fUbq91/Z6ejBYEtHd3zub06GjzwUWGPcUVyCj2CnTw5MQPgILLAHTpHmjyFLZx+rcBlFsGIL1czZ/Cpkfn/AAouAxAx+/+6NIzO3o1UjyFNQDN4p3ocgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSACoHIAWgcgBSyYC6LloQgFQwoK7LFgQgBaByAFIAKgcgFQyIeyArAPEUZgUgAFkBCEBWAAKQFYAAZAUgAFkBCEBWAAKQFYAAZAUgAFkBCEBWAAKQFYAAZAUgAFkBCEBWAAKQFYAAZAUgAFkBCEBWAAKQFYAAZPVpANrtta7f05MRVyA7rkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkAKQOUApABUDkDquh0dPBnd3Tl/NF7funiWngKQUQago82N9ureuaO90ecAUgBS1+zo4Lut4yvO/OjFZ99zBZoGIHXNjsbf7LSDb5+eP5oBuqN2e63r9/RktCCgvbtzNqdH3APN4gqk6legs2fpKQAZZQC6fA8EoHkAUtc+hT04eQqbHwFoFoDUYu8DyQzvA10IQIp3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fOv0swQnR68m023oQGPea0ebo9Gg816etf+RIgG90h/f8GLyv/rkYLjGX/9qpx38bv0KQK/0Yd0nDyZ+JmPqY0/nPrEyQFfM2vtIiYBmH4A92tw4ORhwmPH675+28R+uAKSPWk7/y2xAfXR3aECXZ11KQHvzS87esK9e08br/9ho//n+CkCz6SZ6zqxoaECXZl1OQPcuHgzYeP2HXx/96YerAM2me7Exvfac+1sDdcWsSwnoZCFnNjNY4/V//vm/fxy/E9DxFWj81eizp8MDujTrUgIKuwfa+vtfHlwF6MI90HTYoQFdmnUpAWU9ha1v7X329CpA0+lmT2G6+OwlXIEuzbqcgKLeB5qu4zygr0bT932m023Mv/P5hT/6ZoCumHVJAdEnE4AWb3blmd4sx/fRZgUQWQGIrABEVgAiKwCRFYDICkDXtn/75vPJl7f3b708+d7//tb2f/L48j/7ZvqPLlMAurb92zceT7+cAhIeAE0D0LXt3/5ydfJl+0sAXRGArm3/9i++eNkOf/NoAujwYdfdfL5/u+tW93/yqOu6tTb93krTa1x34xGA6GL7t3/52+dt/2f/uvXy8OFEyvatl9MrkF7Stm8+1/f019v7q5O/AEQX27+9tr3W3qy+ufVy+gr19v7aDNDa9LVs+r3Jf0y/bgOILjaR8malPVubANqe/R+vr57cAwmQbo0mX7enX38KILrQBNDbL/798+cCdHwfDaCTAHRteq3666OVppewG7Mnr3OA9L35SxhPYXQpAdruVgXo8OHkMjMRM7kNOgF0ehO9wk00XZEAScub48d4XXGedStzQDzGE9UDEFkBiKwARFYAIisAkRWAyOr/Pu/dKd9b+TcAAAAASUVORK5CYII=" width="66.66%" style="display: block; margin: auto;" /></p>
+<p>Conversely, say we want to visually compare coverage for the three methods compared with this simulation study:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="kw">get_data</span>(ss1, <span class="dt">sstat =</span> <span class="st">&quot;cover&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> method, <span class="dt">y =</span> coef, <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="fl">0.95</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_errorbar</span>(<span class="dt">width =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span><span class="dv">3</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">coord_cartesian</span>(<span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Method&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Coverage&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,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" width="66.66%" style="display: block; margin: auto;" /></p>
+</div>
+<div id="dropping-large-estimates-and-standard-errors" class="section level2">
+<h2>Dropping large estimates and standard errors</h2>
+<p><code>rsimsum</code> allows to automatically drop estimates and standard errors that are larger than a predefined value. Specifically, the argument of <code>simsum</code> that control this behaviour are <code>dropbig</code>, <code>max</code> and <code>semax</code>.</p>
+<p>Set <code>dropbig</code> to <code>TRUE</code>, and then standardised estimates larger than <code>max</code> in absolute value will be dropped; standard errors larger than <code>semax</code> times the average standard error will be dropped too.</p>
+<p>For instance, say we want to drop standardised estimates larger than <span class="math inline">\(4\)</span> in absolute value and standard errors larger than <span class="math inline">\(1.5\)</span> times the average standard error:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s1.<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">simsum</span>(<span class="dt">data =</span> MIsim, <span class="dt">estvarname =</span> <span class="st">&quot;b&quot;</span>, <span class="dt">true =</span> <span class="fl">0.50</span>, <span class="dt">se =</span> <span class="st">&quot;se&quot;</span>, <span class="dt">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="dt">ref =</span> <span class="st">&quot;CC&quot;</span>, <span class="dt">dropbig =</span> <span class="ot">TRUE</span>, <span class="dt">max =</span> <span class="dv">4</span>, <span class="dt">semax =</span> <span class="fl">1.5</span>)</code></pre></div>
+<p>Were any estimates dropped?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dropbig</span>(s1.<span class="dv">2</span>)
+<span class="co">#&gt; Dropped point estimates:</span>
+<span class="co">#&gt; # A tibble: 2 x 4</span>
+<span class="co">#&gt;   dataset method       b    se</span>
+<span class="co">#&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt; 1     761 MI_T    -0.148 0.143</span>
+<span class="co">#&gt; 2     761 MI_LOGT -0.108 0.159</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Dropped standard errors:</span>
+<span class="co">#&gt; # A tibble: 8 x 4</span>
+<span class="co">#&gt;   dataset method      b    se</span>
+<span class="co">#&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt; 1    19.0 MI_T    0.460 0.216</span>
+<span class="co">#&gt; 2   159   MI_T    0.860 0.228</span>
+<span class="co">#&gt; 3   211   MI_T    0.464 0.215</span>
+<span class="co">#&gt; 4   256   CC      0.278 0.219</span>
+<span class="co">#&gt; 5   417   CC      0.601 0.210</span>
+<span class="co">#&gt; 6   417   MI_LOGT 0.653 0.223</span>
+<span class="co">#&gt; 7   551   MI_LOGT 0.543 0.227</span>
+<span class="co">#&gt; 8   585   MI_LOGT 0.737 0.207</span></code></pre></div>
+<p>Yes they were!</p>
+<p>Everything else works analogously as before; for instance, to summarise the results:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(s1.<span class="dv">2</span>)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt;  simsum(data = MIsim, estvarname = &quot;b&quot;, true = 0.5, se = &quot;se&quot;, </span>
+<span class="co">#&gt;     methodvar = &quot;method&quot;, ref = &quot;CC&quot;, dropbig = TRUE, max = 4, </span>
+<span class="co">#&gt;     semax = 1.5)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Method variable: method </span>
+<span class="co">#&gt;  Unique methods: CC, MI_LOGT, MI_T </span>
+<span class="co">#&gt;  Reference method: CC </span>
+<span class="co">#&gt; By factors: none</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Summary statistics:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = CC </span>
+<span class="co">#&gt;                                                 Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 998.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   0.5169     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   0.5070     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error   0.0216     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error   0.0211     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   0.0169 0.0048    0.0076    0.0263</span>
+<span class="co">#&gt;                    Empirical standard error   0.1511 0.0034    0.1444    0.1577</span>
+<span class="co">#&gt;                          Mean squared error   0.0231 0.0011    0.0209    0.0253</span>
+<span class="co">#&gt;   % gain in precision relative to method CC   1.0000 0.0000    1.0000    1.0000</span>
+<span class="co">#&gt;                  Model-based standard error   0.1469 0.0005    0.1459    0.1479</span>
+<span class="co">#&gt;          Relative % error in standard error  -2.7304 2.2043   -7.0508    1.5900</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI   0.9429 0.0073    0.9285    0.9573</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI   0.9399 0.0075    0.9251    0.9546</span>
+<span class="co">#&gt;                      Power of 5% level test   0.9469 0.0071    0.9330    0.9608</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = MI_LOGT </span>
+<span class="co">#&gt;                                                 Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 996.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   0.5011     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   0.4960     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error   0.0181     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error   0.0172     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   0.0011 0.0041   -0.0070    0.0092</span>
+<span class="co">#&gt;                    Empirical standard error   0.1305 0.0029    0.1248    0.1363</span>
+<span class="co">#&gt;                          Mean squared error   0.0170 0.0008    0.0154    0.0186</span>
+<span class="co">#&gt;   % gain in precision relative to method CC   1.3389 0.0404    1.2596    1.4181</span>
+<span class="co">#&gt;                  Model-based standard error   0.1346 0.0006    0.1335    0.1357</span>
+<span class="co">#&gt;          Relative % error in standard error   3.0930 2.3522   -1.5173    7.7033</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI   0.9498 0.0069    0.9362    0.9634</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI   0.9498 0.0069    0.9362    0.9634</span>
+<span class="co">#&gt;                      Power of 5% level test   0.9699 0.0054    0.9593    0.9805</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = MI_T </span>
+<span class="co">#&gt;                                                 Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 996.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   0.4992     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   0.4941     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error   0.0178     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error   0.0169     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate  -0.0008 0.0042   -0.0091    0.0074</span>
+<span class="co">#&gt;                    Empirical standard error   0.1326 0.0030    0.1268    0.1384</span>
+<span class="co">#&gt;                          Mean squared error   0.0176 0.0008    0.0160    0.0192</span>
+<span class="co">#&gt;   % gain in precision relative to method CC   1.2973 0.0398    1.2193    1.3752</span>
+<span class="co">#&gt;                  Model-based standard error   0.1335 0.0006    0.1324    0.1346</span>
+<span class="co">#&gt;          Relative % error in standard error   0.6505 2.2942   -3.8460    5.1471</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI   0.9438 0.0073    0.9295    0.9581</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI   0.9438 0.0073    0.9295    0.9581</span>
+<span class="co">#&gt;                      Power of 5% level test   0.9639 0.0059    0.9523    0.9754</span></code></pre></div>
+</div>
+</div>
+<div id="example-2-simulation-study-on-survival-modelling" class="section level1">
+<h1>Example 2: Simulation study on survival modelling</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;relhaz&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</code></pre></div>
+<p>Let’s have a look at the first 10 rows of the dataset:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(relhaz, <span class="dt">n =</span> <span class="dv">10</span>)
+<span class="co">#&gt;    dataset  n    baseline       theta        se model</span>
+<span class="co">#&gt; 1        1 50 Exponential -0.88006151 0.3330172   Cox</span>
+<span class="co">#&gt; 2        2 50 Exponential -0.81460242 0.3253010   Cox</span>
+<span class="co">#&gt; 3        3 50 Exponential -0.14262887 0.3050516   Cox</span>
+<span class="co">#&gt; 4        4 50 Exponential -0.33251820 0.3144033   Cox</span>
+<span class="co">#&gt; 5        5 50 Exponential -0.48269940 0.3064726   Cox</span>
+<span class="co">#&gt; 6        6 50 Exponential -0.03160756 0.3097203   Cox</span>
+<span class="co">#&gt; 7        7 50 Exponential -0.23578090 0.3121350   Cox</span>
+<span class="co">#&gt; 8        8 50 Exponential -0.05046332 0.3136058   Cox</span>
+<span class="co">#&gt; 9        9 50 Exponential -0.22378715 0.3066037   Cox</span>
+<span class="co">#&gt; 10      10 50 Exponential -0.45326446 0.3330173   Cox</span></code></pre></div>
+<p>The included variables are:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(relhaz)
+<span class="co">#&gt; 'data.frame':    12000 obs. of  6 variables:</span>
+<span class="co">#&gt;  $ dataset : int  1 2 3 4 5 6 7 8 9 10 ...</span>
+<span class="co">#&gt;  $ n       : num  50 50 50 50 50 50 50 50 50 50 ...</span>
+<span class="co">#&gt;  $ baseline: chr  &quot;Exponential&quot; &quot;Exponential&quot; &quot;Exponential&quot; &quot;Exponential&quot; ...</span>
+<span class="co">#&gt;  $ theta   : num  -0.88 -0.815 -0.143 -0.333 -0.483 ...</span>
+<span class="co">#&gt;  $ se      : num  0.333 0.325 0.305 0.314 0.306 ...</span>
+<span class="co">#&gt;  $ model   : chr  &quot;Cox&quot; &quot;Cox&quot; &quot;Cox&quot; &quot;Cox&quot; ...</span></code></pre></div>
+<ul>
+<li><p><code>dataset</code>, simulated dataset number;</p></li>
+<li><p><code>n</code>, sample size of the simulate dataset;</p></li>
+<li><p><code>baseline</code>, baseline hazard function of the simulated dataset;</p></li>
+<li><p><code>model</code>, method used (Cox model or Royston-Parmar model with 2 degrees of freedom);</p></li>
+<li><p><code>theta</code>, point estimate for the log-hazard ratio;</p></li>
+<li><p><code>se</code>, standard error of the point estimate.</p></li>
+</ul>
+<p><code>rsimsum</code> can summarise results from simulation studies with plenty of data-generating mechanisms. For instance, with this example we show how to compute summary statistics by baseline hazard function and sample size.</p>
+<p>In order to summarise results by data-generating factors, it is sufficient to define the “by” factors in the call to <code>simsum</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">s2 &lt;-<span class="st"> </span><span class="kw">simsum</span>(<span class="dt">data =</span> relhaz, <span class="dt">estvarname =</span> <span class="st">&quot;theta&quot;</span>, <span class="dt">true =</span> <span class="op">-</span><span class="fl">0.50</span>, <span class="dt">se =</span> <span class="st">&quot;se&quot;</span>, <span class="dt">methodvar =</span> <span class="st">&quot;model&quot;</span>, <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;baseline&quot;</span>, <span class="st">&quot;n&quot;</span>))
+<span class="co">#&gt; `ref` was not specified, Cox set as the reference</span>
+s2
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt;  simsum(data = relhaz, estvarname = &quot;theta&quot;, true = -0.5, se = &quot;se&quot;, </span>
+<span class="co">#&gt;     methodvar = &quot;model&quot;, by = c(&quot;baseline&quot;, &quot;n&quot;))</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Method variable: model </span>
+<span class="co">#&gt;  Unique methods: Cox, Exp, RP(2) </span>
+<span class="co">#&gt;  Reference method: Cox </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; By factors: baseline, n </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Monte Carlo standard errors were computed.</span></code></pre></div>
+<p>Summarising the results will be printed out for each method and combination of data-generating factors:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ss2 &lt;-<span class="st"> </span><span class="kw">summary</span>(s2)
+ss2
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:</span>
+<span class="co">#&gt;  simsum(data = relhaz, estvarname = &quot;theta&quot;, true = -0.5, se = &quot;se&quot;, </span>
+<span class="co">#&gt;     methodvar = &quot;model&quot;, by = c(&quot;baseline&quot;, &quot;n&quot;))</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Method variable: model </span>
+<span class="co">#&gt;  Unique methods: Cox, Exp, RP(2) </span>
+<span class="co">#&gt;  Reference method: Cox </span>
+<span class="co">#&gt; By factors: baseline, n </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Summary statistics:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Cox, baseline = Exponential, n = 250 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5004     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.4969     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0194     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0194     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0004 0.0043   -0.0088    0.0081</span>
+<span class="co">#&gt;                    Empirical standard error    0.1363 0.0030    0.1303    0.1422</span>
+<span class="co">#&gt;                          Mean squared error    0.0185 0.0009    0.0168    0.0203</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0000 0.0000    1.0000    1.0000</span>
+<span class="co">#&gt;                  Model-based standard error    0.1394 0.0001    0.1393    0.1396</span>
+<span class="co">#&gt;          Relative % error in standard error    2.3293 2.2894   -2.1578    6.8164</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9510 0.0068    0.9376    0.9644</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9520 0.0068    0.9388    0.9652</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9570 0.0064    0.9444    0.9696</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Exp, baseline = Exponential, n = 250 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.4996     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5004     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0191     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0190     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate    0.0004 0.0043   -0.0080    0.0088</span>
+<span class="co">#&gt;                    Empirical standard error    0.1350 0.0030    0.1291    0.1409</span>
+<span class="co">#&gt;                          Mean squared error    0.0182 0.0009    0.0165    0.0199</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0192 0.0093    1.0009    1.0375</span>
+<span class="co">#&gt;                  Model-based standard error    0.1381 0.0001    0.1379    0.1382</span>
+<span class="co">#&gt;          Relative % error in standard error    2.2813 2.2882   -2.2035    6.7661</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9540 0.0066    0.9410    0.9670</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9540 0.0066    0.9410    0.9670</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9570 0.0064    0.9444    0.9696</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = RP(2), baseline = Exponential, n = 250 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5015     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0194     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0193     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0015 0.0043   -0.0100    0.0069</span>
+<span class="co">#&gt;                    Empirical standard error    0.1363 0.0030    0.1303    0.1423</span>
+<span class="co">#&gt;                          Mean squared error    0.0186 0.0009    0.0168    0.0203</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    0.9996 0.0034    0.9929    1.0063</span>
+<span class="co">#&gt;                  Model-based standard error    0.1392 0.0001    0.1391    0.1394</span>
+<span class="co">#&gt;          Relative % error in standard error    2.1570 2.2855   -2.3225    6.6365</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9520 0.0068    0.9388    0.9652</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9520 0.0068    0.9388    0.9652</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9590 0.0063    0.9467    0.9713</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Cox, baseline = Weibull, n = 250 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5057     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5031     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0173     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0172     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0057 0.0040   -0.0136    0.0022</span>
+<span class="co">#&gt;                    Empirical standard error    0.1274 0.0029    0.1219    0.1330</span>
+<span class="co">#&gt;                          Mean squared error    0.0163 0.0008    0.0147    0.0178</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0000 0.0000    1.0000    1.0000</span>
+<span class="co">#&gt;                  Model-based standard error    0.1316 0.0001    0.1315    0.1317</span>
+<span class="co">#&gt;          Relative % error in standard error    3.2717 2.3104   -1.2566    7.8001</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9440 0.0073    0.9297    0.9583</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9500 0.0069    0.9365    0.9635</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9740 0.0050    0.9641    0.9839</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Exp, baseline = Weibull, n = 250 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.3522     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.3500     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0164     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0163     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate    0.1478 0.0028    0.1423    0.1533</span>
+<span class="co">#&gt;                    Empirical standard error    0.0886 0.0020    0.0847    0.0925</span>
+<span class="co">#&gt;                          Mean squared error    0.0297 0.0009    0.0279    0.0314</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    2.0701 0.0381    1.9954    2.1448</span>
+<span class="co">#&gt;                  Model-based standard error    0.1280 0.0000    0.1279    0.1280</span>
+<span class="co">#&gt;          Relative % error in standard error   44.4489 3.2309   38.1165   50.7813</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.8900 0.0099    0.8706    0.9094</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9910 0.0030    0.9851    0.9969</span>
+<span class="co">#&gt;                      Power of 5% level test    0.8870 0.0100    0.8674    0.9066</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = RP(2), baseline = Weibull, n = 250 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5072     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5055     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0171     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0171     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0072 0.0040   -0.0150    0.0007</span>
+<span class="co">#&gt;                    Empirical standard error    0.1267 0.0028    0.1212    0.1323</span>
+<span class="co">#&gt;                          Mean squared error    0.0161 0.0008    0.0146    0.0176</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0116 0.0067    0.9984    1.0248</span>
+<span class="co">#&gt;                  Model-based standard error    0.1309 0.0001    0.1308    0.1310</span>
+<span class="co">#&gt;          Relative % error in standard error    3.3058 2.3110   -1.2238    7.8353</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9470 0.0071    0.9331    0.9609</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9500 0.0069    0.9365    0.9635</span>
+<span class="co">#&gt;                      Power of 5% level test    0.9740 0.0050    0.9641    0.9839</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Cox, baseline = Exponential, n = 50 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5255     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5226     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.1016     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.1003     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0255 0.0104   -0.0458   -0.0052</span>
+<span class="co">#&gt;                    Empirical standard error    0.3277 0.0073    0.3133    0.3421</span>
+<span class="co">#&gt;                          Mean squared error    0.1079 0.0047    0.0988    0.1170</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0000 0.0000    1.0000    1.0000</span>
+<span class="co">#&gt;                  Model-based standard error    0.3188 0.0004    0.3180    0.3197</span>
+<span class="co">#&gt;          Relative % error in standard error   -2.7072 2.1801   -6.9802    1.5658</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9410 0.0075    0.9264    0.9556</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9400 0.0075    0.9253    0.9547</span>
+<span class="co">#&gt;                      Power of 5% level test    0.3740 0.0153    0.3440    0.4040</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Exp, baseline = Exponential, n = 50 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5223     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5181     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0977     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0970     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0223 0.0101   -0.0422   -0.0024</span>
+<span class="co">#&gt;                    Empirical standard error    0.3208 0.0072    0.3068    0.3349</span>
+<span class="co">#&gt;                          Mean squared error    0.1033 0.0045    0.0945    0.1122</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0431 0.0126    1.0183    1.0679</span>
+<span class="co">#&gt;                  Model-based standard error    0.3126 0.0004    0.3118    0.3133</span>
+<span class="co">#&gt;          Relative % error in standard error   -2.5836 2.1821   -6.8603    1.6932</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9370 0.0077    0.9219    0.9521</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9390 0.0076    0.9242    0.9538</span>
+<span class="co">#&gt;                      Power of 5% level test    0.3850 0.0154    0.3548    0.4152</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = RP(2), baseline = Exponential, n = 50 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5337     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5269     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.1005     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0993     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0337 0.0105   -0.0543   -0.0131</span>
+<span class="co">#&gt;                    Empirical standard error    0.3323 0.0074    0.3177    0.3468</span>
+<span class="co">#&gt;                          Mean squared error    0.1114 0.0049    0.1018    0.1210</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    0.9726 0.0066    0.9597    0.9855</span>
+<span class="co">#&gt;                  Model-based standard error    0.3171 0.0004    0.3162    0.3179</span>
+<span class="co">#&gt;          Relative % error in standard error   -4.5711 2.1383   -8.7620   -0.3802</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9370 0.0077    0.9219    0.9521</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9390 0.0076    0.9242    0.9538</span>
+<span class="co">#&gt;                      Power of 5% level test    0.3920 0.0154    0.3617    0.4223</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Cox, baseline = Weibull, n = 50 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5123     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5133     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0926     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0900     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0123 0.0100   -0.0318    0.0073</span>
+<span class="co">#&gt;                    Empirical standard error    0.3158 0.0071    0.3020    0.3297</span>
+<span class="co">#&gt;                          Mean squared error    0.0998 0.0049    0.0903    0.1094</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0000 0.0000    1.0000    1.0000</span>
+<span class="co">#&gt;                  Model-based standard error    0.3043 0.0005    0.3035    0.3052</span>
+<span class="co">#&gt;          Relative % error in standard error   -3.6377 2.1601   -7.8714    0.5960</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9450 0.0072    0.9309    0.9591</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9440 0.0073    0.9297    0.9583</span>
+<span class="co">#&gt;                      Power of 5% level test    0.3820 0.0154    0.3519    0.4121</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = Exp, baseline = Weibull, n = 50 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.3492     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.3506     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0834     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0825     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate    0.1508 0.0066    0.1379    0.1636</span>
+<span class="co">#&gt;                    Empirical standard error    0.2073 0.0046    0.1982    0.2163</span>
+<span class="co">#&gt;                          Mean squared error    0.0656 0.0028    0.0602    0.0711</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    2.3224 0.0503    2.2238    2.4209</span>
+<span class="co">#&gt;                  Model-based standard error    0.2888 0.0002    0.2884    0.2891</span>
+<span class="co">#&gt;          Relative % error in standard error   39.3334 3.1175   33.2231   45.4436</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9740 0.0050    0.9641    0.9839</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9950 0.0022    0.9906    0.9994</span>
+<span class="co">#&gt;                      Power of 5% level test    0.1450 0.0111    0.1232    0.1668</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Method = RP(2), baseline = Weibull, n = 50 </span>
+<span class="co">#&gt;                                                  Coef   MCSE Lower 95% Upper 95%</span>
+<span class="co">#&gt;  Simulations with non-missing estimates/SEs 1000.0000     NA        NA        NA</span>
+<span class="co">#&gt;                      Average point estimate   -0.5187     NA        NA        NA</span>
+<span class="co">#&gt;                       Median point estimate   -0.5120     NA        NA        NA</span>
+<span class="co">#&gt;                      Average standard error    0.0894     NA        NA        NA</span>
+<span class="co">#&gt;                       Median standard error    0.0873     NA        NA        NA</span>
+<span class="co">#&gt;                      Bias in point estimate   -0.0187 0.0100   -0.0382    0.0009</span>
+<span class="co">#&gt;                    Empirical standard error    0.3155 0.0071    0.3017    0.3294</span>
+<span class="co">#&gt;                          Mean squared error    0.0998 0.0047    0.0905    0.1091</span>
+<span class="co">#&gt;  % gain in precision relative to method Cox    1.0020 0.0110    0.9804    1.0237</span>
+<span class="co">#&gt;                  Model-based standard error    0.2989 0.0004    0.2982    0.2997</span>
+<span class="co">#&gt;          Relative % error in standard error   -5.2531 2.1230   -9.4140   -1.0922</span>
+<span class="co">#&gt;                  Coverage of nominal 95% CI    0.9380 0.0076    0.9231    0.9529</span>
+<span class="co">#&gt;   Bias corrected coverage of nominal 95% CI    0.9430 0.0073    0.9286    0.9574</span>
+<span class="co">#&gt;                      Power of 5% level test    0.4140 0.0156    0.3835    0.4445</span></code></pre></div>
+<div id="plotting-summary-statistics-1" class="section level2">
+<h2>Plotting summary statistics</h2>
+<p>Tables could get cumbersome when there are many different data-generating mechanisms. Plots are generally easier to interpret, and can be generated as easily as before.</p>
+<p>Say we want to compare bias for each method by baseline hazard function and sample size using faceting:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(<span class="kw">get_data</span>(ss2, <span class="dt">sstat =</span> <span class="st">&quot;bias&quot;</span>), <span class="kw">aes</span>(<span class="dt">x =</span> model, <span class="dt">y =</span> coef, <span class="dt">ymin =</span> lower, <span class="dt">ymax =</span> upper)) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="dv">0</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">lty =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_errorbar</span>(<span class="dt">width =</span> <span class="dv">1</span> <span class="op">/</span><span class="st"> </span><span class="dv">3</span>) <span class="op">+</span>
+<span class="st">  </span><span class="kw">facet_grid</span>(baseline <span class="op">~</span><span class="st"> </span>n) <span class="op">+</span>
+<span class="st">  </span><span class="kw">theme_bw</span>() <span class="op">+</span>
+<span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Method&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Bias&quot;</span>)</code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAkAAAAJACAMAAABSRCkEAAABOFBMVEUAAAAAACsAAFUAK4AAVaoaGhoaGjoaGloaOnoaWpkrAAArACsrAFUrK4ArgNQzMzM6Gho6Gjo6Glo6Ono6erlNTU1NTWtNTYhNa6ZNiMRVAABVAFVVK4BVVVVVqqpVqtRVqv9aGhpaGjpaGlpaOnpamdlrTU1rTWtrTYhra6ZrpuF6Ohp6Ojp6Olp6udmAKwCAKyuAK1WAgFWA1P+ITU2ITWuITYiIiGuIiIiIxOGIxP+ZWhqZ2ZmZ2bmZ2dmma02ma2uma4impmumxKam4f+qVQCqVSuq1P+q//+5ejq52dnEiE3E/8TE///UgCvUqlXU/6rU///ZmVrZuXrZubnZ2ZnZ2bnZ2dnhpmvh/8Th/+Hh///r6+v/AAD/qlX/xIj/1ID/1Kr/4ab//6r//8T//9T//+H////4SkhNAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAVvUlEQVR4nO3dj3/UyH3G8QW8uTuSGkIQHDRpTYiP5nyB9o5cUjtxoDEJxsUtuPa6vQCusb3//38QjfaH5JWxVvOMfu33831d2GXZPJbG7x3NSJanN6QooXpNbwDV7QIQJRWAKKkAREkFIEoqAFFSaYBumCqTO33jUgAyoIGhumFxpwcAClYAApBUAAKQVAACkFQAApBUAAKQVAACkFQA6jigvZv9/upgsN3v9z/bHOw/6H/+qs4v3xygxvbY1eIA2v/l48HeTx8PNlbd3w7WVgfbX9T45RsE1Ngeu1ocQG9d422sHnzz2P1t/+HmYO/WZo1fvzFAze2xq8UB5CruheKO3B3J9n72KumTaqymADW3x64WCtDB2u3kKBZ/Jt9+bgZQc3vsapEA7T+4PX62sWqoB0qqkT12tUCA9m6uTp5urBoaAyXVyB67WhxAYz+uJz/4zaY7mhmZhTW3x64WB5A7G+IGk/Hjjx4PjJ0HamaPXS0OoMaLM9EAkgpAAJIKQACSCkAAkgpAAJIKQBUAMlUmd/qTFQZQiff+TfpKFUWVSbox8xg6v7aoUkmf6m8BVDoJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQACSkgAEICkJQD6ATp5GX/4wfn78L6+Hw8Moiu6+nqRXtdl1RQGoqERAZ39aHx7eGz3/kMDZWc+ml9iSzrclgDwAnXz/etTxxHLu/Dl+cvZsK5te1WbXFQWgohIBHf/6h+HJb8dmnKT4kBZFSSeU3J74N0M1BdT0htRaIqAPX84AOn60lemFTH0Y6YFC9EBJTcdBptoSQNoYCEAzj6Hza4uqdxb29XQWlgByx7Sz50zjK8ivLaqB80CjvmdyHujOdCJmqi0B5AOoIL3EezvflgACkJQEIABJSQACkJQEIABJSQACkJQEIABJSQACkJQEIABJSQACkJQEIABJSQACkJQEIABJSQACkJQEIABJSQACkJQEIABJSQACkJQEIABJSQCqAFDTt73VWdxYSA8kJdEDAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKAhCApCQAAUhKApAPoNySl9kXbLUlgDwA5Za8zL5grC0B5AEot+TlufWfbLUlgDwA5RacS19gyUsTFXrJy3Mv2Pow0gOF7YGS9Ko2u64oABVV6CUvGQPZ2ungS16ee8FWWwLIA1B+yUvOA5naac5Eh0sCEICkJAABSEoCEICkJAABSEoCEICkJAABSEoCEICkJAABSEoCEICkJAABSEoyDGj/QX9Un20CyDvJMqCHm4ODbx4njwDyTQIQgKQkAAFISgIQgKQkAAFISjIMiGl8iCTDgPZ/9Sr+8+A3mwASkgwDGuzd/GKw8aPH9EBKkmVAg8Hb/moVh7Cm75ussyzfmbr/gB5ITjLcA41mX4yBtCTDgJiFhUgCEICkJLOALrgWDyCPJLOA4tq4PfkDQN5JhgGNBtGZCxkA8kgyDGjU+Wx//gpAQpJlQIONeAiU9QOg8kmmATEL05MABCApyTKggzUOYXKSYUAHawyi9STDgJjGh0gyDIgeKESSYUCMgUIkWQbELCxAEoAAJCUZBjS+Hs/VeCnJMKBRbX9BD6QkmQfENF5LMg/oLYcwKckwoPEYKHtjz7yA0qUxxs8Oo8gtfTlOr2qz64oCUFEFWzN18mxnPZte1WbXFQWgogq2Xtj42dmzrcw/m2pLy4C8z0SnCxSOn8UHsihKOiHWTDVRk2thB9889rkWli6ROn52/GhrmPZCpj6MhnugeAIfA/KZxud6oOTV6TjIVFsaBnSwturZA+XGQMmrAKoiv7YojzHQ3q0/rnmNgdIlUsfP3JHs7DnT+Arya4uq9WJqumZqeh7oznQiZqotAeQDqCC9xHs735aGAXE1PkSSYUCj4mq8lmQeEFfjtSTzgLgaryUZBiRcjS9IL/HezrelYUDMwkIkmQfEGEhLMgwouRjfP3dBHkClkwwDmt7a/D8A8k8yDIgxUIgkw4AmZ6L/wHJPQpJhQPRAIZIABCApyTKg7X5/df+XLLYiJRkGFNvZ+9mr+D8ACUmWAT3cHP0HICHJMCD3i8Y3VvduAUhJMgxoPI1nrQwpyTCg6mZhTd/2VmcZvrGQaXyIJMM90AUrhgGodJJhQPRAIZIABCApCUAAkpIABCApCUAAkpIABCApCUAAkpIABCApCUAAkpIABCApCUAAkpIABCApCUAAkpIABCApCUBdBtT7VEmpACqsZgFV9G0X/++ZAlBRtacHCvddF6N8UQMIQFISgAAkJQEIQFISgHwA5Za8TF8YAqiwzAPKLXmZvpCkz78h8tSrmqgS7wWQB6Dcck/ZVZ/KtGWAyXsFUQAqLBFQbsG59IVkyct379652xffFT4m3/U53jfHYxIVICcuFzT3+6eAQuxEZx5FQLklL9MXkracG3Ire6BySfRAYXugJH3+DWnjGAhAxdWWMVArZ2FtB9SCC4D6LGxmycv0hSS9xJa0EFC5vqzhHqiZC4Dhl7zkPJCpK8iciQ6X5NMDtXKnAQQgqUwCasFxAUD1A2rDNOLSAlBRtacHas0pEV/UAAKQlAQgAElJAAKQlAQgAElJnQbkPZsBULCkTgPyTgJQsCQAAUhKAhCApCQAAUhKAhCApCQAAUhKahaQfAExE1XmzQAKltQooACXoNOsMm8GULAkAAFISvIAFPCbDiCDgIJ+1xdzDJRfY3Nx60bpnU4AhfrywYLKJdEDBUtqtgdiGm8QUMjjDoAsAuJEYlF6ifcCSCsASV+poigAFRWAgiUBCEBS0qIAKjeyB1CwpAUBVPLcAoCCJQEIQFISgAAkJS0IIMZAAKozCUDBkgAEICkJQACSkgAEICkJQACSkgAEICmpfkAt+MWQAAqX1HAP1MwvhgRQuCQAAUhKmhfQQv1qWgCFS/LpgVq507UCyq2ZehhF0V2f1Xpa2ZYAKqrQa6YOd9az6SW2pJVtCaCiCr1e2Nmzrcw/d74tAVRUoVcsjA9kUZR0QsmaqcHuluxAlb8ztaVV552puTVTjx9tDdNeqPMfRnqgohIA7UTRvVwPNPqXyTio820JoKIKPQZKXgVQFfm1RdU7C5tZM9Udyc6eM42vIL/SqMZ+U31uzdTDKLoznYh1si19kzoNyDupFKCP91c+3u9dfTl/eokt6XxbAqgQ0Iul4e7Vl7tL86eX2JLOtyWAigDFHdDpk6Xh+/m7IFNtCaA5AH28vwygTxSAigCdPll+f+U7dyCbO73ElnS+LQFUOAY6ut5bGr649mb+9BJb0vm2BFAhoNJlqi0BBCApCUDzHMJcMYi+sAA0xyD69Ek8EVuZP91UmdzpT9YFgBydF/E0vsQomrJes4B2S51IpMzX7KWMWM8uPRA1d50DFA+Chi96V75ramOo7lXAWycpiwUgSqopoNHPApU8D0SZL/FMtKkyudOfrDCASry38ydlORNdcCb6Ra+37C5mzP/THLbaEkCXA3px7c3pk95KMpefO73ElnS+LQF0KaDTJyvD0UnoEpcyTLUlgC4FlFxDHQHiavyFBSAASUkAApCUBCAASUkAKgA0vV8aQBcWgC4F5FWm2hJAAJKS6gfUhl8YDKBgSQ33QOF+bgJAAJIKQACSCkAAkgpAAJIKQACSCkAAkgpAAJIKQACSyiSgFpyUBZAPoHS9sOHoF9W3Yb2wZtqyWUDyZyWtOgGl64UNhx8SOG1YL8wgoAC97bTqBJRZIWPnzp/jJ61YLwxAUtUJKLtGz2TBg8bXC4ubsokvOwXUxBdPADXxhYOtFzYG1IL1wpr6MDIGCtEDJdXsck82AXV0FpZdJQxA5x9D5xdUNwGl64UNR4DasF5YQ705gDwAZdYLS88DNb5emMFZWGcBFaSXeG/n2xJAAMoVgIpqUQBxLQxA0leqKApARQWgYEkAApCUBCAASUncmQogKYl74wEkJQEIQFISgAAkJQEIQFISgAAkJQEIQFISgAAkJQEIQFISgAAkJQEIQFISgAAkJQGoAkBN3OrWVDV6Y2FjRQ8ULIkeCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoB8AOWWvMy+YKstAeQBKLfkZfYFY20JIA9AuSUvz63/ZKstAeQBKLfgXPpCc0teNlTcmeoBKLfk5bkXbH0Y6YHC9kBJelWbXVcUgIoq9JKXjIFs7XTwJS/PvWCrLQHkASi/5CXngUztNGeiwyUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBSEoAqANT0fZN1Fnem0gNJSfRAezc/2wSQd5JtQNv9fv/zV/RAQpJhQPsP+rc5hKlJhgENDtb6M4QAVDrJMqDxQSxzDANQ6STrgNwo+haDaP8k64D2bvbTSRiAyieZBvS2n9UDIJ8kw4DiWdgqszA1yTCg0TTs3DwMQKWTTAMaz8M4Ey0kAYhDmJRkGVByBMteyQBQ+STDgA7Wbh9883iba2FSkmFA+w83Y0DxnwASkgwDOlhbpQeSkwwDGuzd+uMaYyAxyTIgZmEBkgAEICnJMKD9B31Xn/3hIScS/ZMMA6IHCpEEIB9A6dIY42eHUeSWvhynV7XZdUUBqKiyh7B++Wth6RKpk2c769n0qja7rigAFdWoB9pwF+K3vyjfA6XLg42fnT3byvyzqbY0DGh0DtrnTHS6QOH4WXwgi6KkE2LNVBM1uRbmeiCPM9HpEqnjZ8ePtoZpL2Tqw2i4B4qPYZ5X43M9UPLqdBxkqi1NA/KdheXGQMmrAKoiv7aoOgGlS6SOn7kj2dlzpvEV5NcW5QHo7cwk3mfN1PQ80J3pRMxUWxoGtP9g9qYMzkSXT7IM6OEmgOQkw4AG27O/nANA5ZMMA5pcjedHWpUkw4D8Z2FF6SXe2/m2BBCApCTDgPyvxhell3hv59vSMCB6oBBJAAKQlGQYEIewEEmGAdEDhUgCEICkJAABSEoCEICkJAABSEoCEICkJAABSEoCEICkJAABSEoCUAWAmr7trc4yfGMhPVCIJHogAElJAAKQlAQgAElJAAKQlAQgAElJAAKQlAQgAElJAAKQlAQgAElJAAKQlAQgAElJAAKQlAQgAElJAAKQlAQgAElJAAKQlAQgAElJAAKQlDQvoN6nynMbxwUg6StVFFV1DySiyRaApK9UURSAigpAwZIA5AMot+Rl+sIQQIVlHlBuycv0hSS94Ksv1HgSQB6Acss9ZVd96mhb+qLuNCDvT7IIKLfgXPpCsuTlu3fv3O2L7+Z47M35vlofeyXePwVkaafVO1NzS16mLyRtWQg4rdZ8GLNVZqM63QNlq9RGVdcDJelVbfblBSCp6gS0iGOgbAGoqEIveZm+kKSX2Gp16pUpAElVJ6D8kpee54ECTN7TApBUtQIqSJ/7ne0EVGqbAASgmSq3UQBqElArx0AAKq7WAGpjWwKouAB0WTEGKiwAXVoVz8LaeNwGUHcAtXLmACAAidUhQK3/eSAAFVV7eqBW/kQiY6CiAlCuTP5AWbYAxI+0KlWuWwRQsKQFAVRyYAagYEkAApCUBCAASUkLAogxEIDEYhYGIKkABCCpAAQgqdoEaHaFzUWuGx473atsa4QqtVH0QMGS6IEAJCUBCEBSEoAAJCUBCEBSEoAAJCUBCEBS0ryAFurneAEULsmnB2rlTgMIQFIBCEBSAQhAUgEIQFIBCEBSAQhApcv71AKAgiV1GpB3EoCCJQEIQFISgAAkJQEIQFISgAAkJQEIQFISgAAkJQHIB1BuzdTDKIru+qzW0/m2BJAHoNyaqcOd9Wx6VZtdVxSAiir0emFnz7Yy/2yqLQHkASi3YmF8IIuipBNK1kyt6ubJNpbPnandr9Brph4/2hqmvZCpDyM9UElAO1F0L9cDjf5lMg4y1ZYACjEGSl4FUBX5tUXVOwubWTPVHcnOnjONryC/tqgGzgNl1kw9jKI704mYqbYEkA+ggvQS7+18WwIIQFISgAAkJQEIQFISgAAkJQEIQFISgAAkJQEIQFISgAAkJQGoAkCmyuROf7KCACqFrY1RATeq6vyW7jSAKq3F32kAVVqLv9P1AaIWsgBESQUgSioAUVIBiJKqckAfomhyc7RYx1/FUZmfp/XPuPt6/OTr+KXDr5O/rCf3nQQqQztdNaBDdx/9TpDGnNwTomccfvlD8sTdphS3YPLwaMu1apiytNMVAxrdSebuqz956j4DO5ObPDxqelORyzj5/j98PpejjPjP5Inbrp314Qe3RfGju3MpRJna6YoBfZh+DOMWiP9y8v1/em/wpC2TjJOnX/7w4W7pqPMfxvgTOGm/5Jt+7hdH+Jepna4a0OST57bZbe9h5N1ljo7g8TfHZZw8XR+e/0UP5TJGT6ZjAHfX2zDUMczUTlcMaDpGc/jdvrvDrm/WZDjgMjw/PC7jgzsKTMJGvcXJ06QVAwEytdN1jYEmH8ad3/uOBtK2dBkuy+fD6DLcGHcSlnyzj78afVMCATK107XNwkbDgeNf/1/5BhhXuvtxxsnTe5mxRrmMsz/dy4wtXk+bMtQYyNRO13YeKJmQuBmARwuManQEj/49yfjf3/5OmJB89XX6yV5PfmufGxqEmoWZ2umunome/KYZuTJn0oKdB6qq2rjT5gGlLRjwTHRF1cad7iogqiUFIEoqAFFSAYiSCkCUVACipALQhXV0/erL+OHj/Wtvpq/9/1+HRz/+Lv/e98lbrRaALqyj61e+Sx5SQA4PgHIFoAvr6PovluOH3V8AqKAAdGEdXf+nn78Znv7rtzGg0ye93tWXR9d7veWjH3/b6/VWhslrS0N3jOtd+RZA1GwdXf/nf3s5PPqH/7r25vRJLGX32pukB3KHtN2rL91r7n8f7y/H/wMQNVtH11d2V4bvl99fe5McoT7eXxkBWkmOZclr8R/J4y6AqNmKpbxfGr5YiQHt9pJano6BHCA3NIofd5PHnwCImqkY0Mef//c/vnSAxuNoAF1YALqw3LHqL98uDd0h7Mpo5nUOkHttcghjFkblygHa7S07QKdP4m4mFhMPg6aA0kH0EoNo6oJygJyW9+NpvOtxXvSWJoCYxk8LQJRUAKKkAhAlFYAoqQBESQUgSioAUVL9HfexhjJfxCG1AAAAAElFTkSuQmCC" width="66.66%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<ul>
+<li>White, I.R. 2010. <em>simsum: Analyses of simulation studies including Monte Carlo error</em>. The Stata Journal 10(3): 369-385 &lt;<a href="http://www.stata-journal.com/article.html?article=st0200" class="uri">http://www.stata-journal.com/article.html?article=st0200</a>&gt;</li>
+<li>Morris, T.P, White, I.R., and Crowther, M.J. 2017. <em>Using simulation studies to evaluate statistical methods</em>. &lt;<a href="https://arxiv.org/abs/1712.03198">arXiv:1712.03198</a>&gt;</li>
+<li>White, I.R., and P. Royston. 2009. <em>Imputing missing covariate values for the Cox model</em>. Statistics in Medicine 28(15):1982-1998 &lt;<a href="https://doi.org/10.1002/sim.3618">doi:10.1002/sim.3618</a>&gt;</li>
+<li>Little, R.J.A., and D.B. Rubin. 2002. <em>Statistical analysis with missing data</em>. 2nd ed. Hoboken, NJ: Wiley &lt;<a href="https://doi.org/10.1002/9781119013563">doi:10.1002/9781119013563</a>&gt;</li>
+<li>van Buuren, S., H.C. Boshuizen, and D.L. Knook. 1999. <em>Multiple imputation of missing blood pressure covariates in survival analysis</em>. Statistics in Medicine 18(6):681-694 &lt;<a href="https://doi.org/10.1002/(SICI)1097-0258(19990330)18:6%3C681::AID-SIM71%3E3.0.CO;2-R">doi:10.1002/(SICI)1097-0258(19990330)18:6&lt;681::AID-SIM71&gt;3.0.CO;2-R</a>&gt;</li>
+</ul>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
