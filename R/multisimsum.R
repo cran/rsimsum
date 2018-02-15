@@ -1,14 +1,12 @@
-#' multisimsum
-#'
 #' @title Analyses of simulation studies with multiple estimands at once, including Monte Carlo error
 #' @description `multisimsum` is an extension of [simsum()] that can handle multiple estimated parameters at once. `multisimsum` calls [simsum()] internally, each estimands at once. There is only one new argument that must be set when calling `multisimsum`: `par`, a string representing the column of `data` that identifies the different estimands.
 #' @param par The name of the variable containing the methods to compare. Can be `NULL`.
 #' @inheritParams simsum
 #' @return An object of class `multisimsum`.
 #' @export
-#'
+#' @inherit simsum details
 #' @examples
-#' data(frailty)
+#' data("frailty", package = "rsimsum")
 #' ms <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50,
 #'    fv = 0.75), estvarname = "b", se = "se", methodvar = "model",
 #'    by = "fv_dist")
@@ -29,7 +27,8 @@ multisimsum <- function(data,
                         mcse = TRUE,
                         sanitise = TRUE,
                         na.rm = TRUE,
-                        na.pair = TRUE) {
+                        na.pair = TRUE,
+                        x = FALSE) {
   ### Check new arguments not checked in 'simsum'
   arg_checks <- checkmate::makeAssertCollection()
 
@@ -39,8 +38,8 @@ multisimsum <- function(data,
   # `par` must be in `data`
   checkmate::assert_subset(x = par, choices = names(data), add = arg_checks)
 
-  # `par` must not be any in (`stat`, `coef`, `mcse`, `lower`, `upper`)
-  checkmate::assert_false(x = (par %in% c("stat", "coef", "mcse", "lower", "upper")), add = arg_checks)
+  # `par` must not be any in (`stat`, `est`, `mcse`, `lower`, `upper`)
+  checkmate::assert_false(x = (par %in% c("stat", "est", "mcse", "lower", "upper")), add = arg_checks)
 
   # `true` must a named vector
   # its length must be equal to the number of unique elements in `par`
@@ -53,10 +52,11 @@ multisimsum <- function(data,
   checkmate::assert_number(max, add = arg_checks)
   checkmate::assert_number(semax, add = arg_checks)
 
-  # `dropbig`, `sanitise`, `na.pair` must be single logical value
+  # `dropbig`, `sanitise`, `na.pair`, `x` must be single logical value
   checkmate::assert_logical(dropbig, len = 1, add = arg_checks)
   checkmate::assert_logical(sanitise, len = 1, add = arg_checks)
   checkmate::assert_logical(na.pair, len = 1, add = arg_checks)
+  checkmate::assert_logical(x, len = 1, add = arg_checks)
 
   ### Report if there are any errors
   if (!arg_checks$isEmpty()) {
@@ -166,6 +166,9 @@ multisimsum <- function(data,
   obj$sanitise <- sanitise
   obj$na.rm <- na.rm
   obj$na.pair <- na.pair
+  if (x) {
+    obj$data <- stats::na.omit(data)
+  }
 
   ### Return object of class simsum
   class(obj) <- c("list", "multisimsum")

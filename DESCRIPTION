@@ -1,5 +1,5 @@
 Package: rsimsum
-Version: 0.1.0
+Version: 0.2.0
 Title: Analysis of Simulation Studies Including Monte Carlo Error
 Description: Summarise results from simulation studies and compute Monte Carlo
   standard errors of commonly used summary statistics. This package is modelled 
@@ -9,19 +9,20 @@ Authors@R: c(person("Alessandro", "Gasparini", role = c("aut", "cre"), email = "
 	person("Ian R.", "White", role = "aut"))
 License: GPL (>= 3)
 Depends: R (>= 2.10)
-Imports: checkmate, stats
-Suggests: covr, devtools, eha, ggplot2, knitr, rmarkdown, rstpm2,
-        survival, testthat, tidyverse
+Imports: checkmate, ggplot2, stats
+Suggests: covr, devtools, eha, knitr, rmarkdown, rstpm2, survival,
+        testthat, tidyverse
 URL: https://github.com/ellessenne/rsimsum
 BugReports: https://github.com/ellessenne/rsimsum/issues
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 Encoding: UTF-8
 LazyData: true
+ByteCompile: true
 NeedsCompilation: no
-Packaged: 2018-02-01 10:40:19 UTC; ag475
+Packaged: 2018-02-15 21:26:20 UTC; ellessenne
 Author: Alessandro Gasparini [aut, cre],
   Ian R. White [aut]
 Maintainer: Alessandro Gasparini <ag475@leicester.ac.uk>
 Repository: CRAN
-Date/Publication: 2018-02-05 10:07:10 UTC
+Date/Publication: 2018-02-15 21:39:58 UTC

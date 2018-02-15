@@ -3,11 +3,11 @@ context("simsum")
 test_that("simsum prints ok", {
   data("MIsim")
   data("relhaz")
-  print(simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method"))
-  print(simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se"))
-  print(simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", mcse = FALSE))
-  print(simsum(data = relhaz, estvarname = "theta", true = -0.5, se = "se", methodvar = "model", by = c("n", "baseline")))
-  print(simsum(data = relhaz, estvarname = "theta", true = -0.5, se = "se", by = c("n", "baseline")))
+  expect_output(print(simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method")))
+  expect_output(print(simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se")))
+  expect_output(print(simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", mcse = FALSE)))
+  expect_output(print(simsum(data = relhaz, estvarname = "theta", true = -0.5, se = "se", methodvar = "model", by = c("n", "baseline"))))
+  expect_output(print(simsum(data = relhaz, estvarname = "theta", true = -0.5, se = "se", by = c("n", "baseline"))))
 })
 
 test_that("simsum returns an object of class simsum", {
@@ -135,4 +135,17 @@ test_that("simsum works with missing data and default arguments", {
   x[which(rnorm(nrow(x)) > 2), "b"] <- NA
   x[which(rnorm(nrow(x)) > 2), "se"] <- NA
   simsum(data = x, estvarname = "b", true = 0.5, se = "se", methodvar = "method")
+})
+
+test_that("simsum with x = FALSE does not return data", {
+  data("MIsim")
+  s <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method", x = FALSE)
+  expect_null(object = s$data)
+})
+
+test_that("simsum with x = TRUE returns the original dataset (setting all data processing arguments to FALSE is required)", {
+  data("MIsim")
+  s <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method", x = TRUE, dropbig = FALSE, na.rm = FALSE, na.pair = FALSE)
+  expect_s3_class(object = s$data, class = "data.frame")
+  expect_equal(object = s$data, expected = na.omit(MIsim))
 })

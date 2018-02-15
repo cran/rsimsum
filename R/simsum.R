@@ -1,5 +1,3 @@
-#' simsum
-#'
 #' @title Analyses of simulation studies including Monte Carlo error
 #' @description `simsum` computes performance measures for simulation studies in which each simulated data set yields point estimates by one or more analysis methods. Bias, empirical standard error and precision relative to a reference method can be computed for each method.  If, in addition, model-based standard errors are available then `simsum` can compute the average model-based standard error, the relative error in the model-based standard error, the coverage of nominal confidence intervals, and the power to reject a null hypothesis. Monte Carlo errors are available for all estimated quantities.
 #' @param data A `data.frame` in which variable names are interpreted. It has to be in tidy format, e.g. each variable forms a column and each observation forms a row.
@@ -18,10 +16,14 @@
 #' @param sanitise Sanitise column names passed to `simsum` by removing all dot characters (`.`), which could cause problems. Defaults to `TRUE`.
 #' @param na.rm A logical value indicating whether missing values (`NA`) should be removed before the computation proceeds. Defaults to `TRUE`.
 #' @param na.pair Removes estimates that have a missing standard error (and vice versa). Defaults to `TRUE`.
+#' @param x Set to `TRUE` to include the `data` argument (as utilised to compute summary statistics, i.e. applying `dropbig`, `na.rm`, `na.pair`) as a slot. Defaults to `FALSE`.
 #' @return An object of class `simsum`.
 #' @references White, I.R. 2010. simsum: Analyses of simulation studies including Monte Carlo error. The Stata Journal 10(3): 369-385. \url{http://www.stata-journal.com/article.html?article=st0200}
 #' @references Morris, T.P, White, I.R. and Crowther, M.J. 2017. Using simulation studies to evaluate statistical methods. [arXiv:1712.03198](https://arxiv.org/abs/1712.03198)
 #' @export
+#' @details
+#' The following names are not allowed for `estvarname`, `se`, `methodvar`, `by`: `stat`, `est`, `mcse`, `lower`, `upper`.
+#' Calling the function with `x = TRUE` is required to produce zip plots (e.g. via the [zip()] method). The downside is that the size of the returned object increases considerably, therefore it is set to `FALSE` by default. Please note that the `data` slot returned when `x = TRUE` is obtained according to the value of the arguments `dropbig`, `na.rm`, `na.pair`; all rows with missing values are removed via a call to [stats::na.omit()].
 #'
 #' @examples
 #' data("MIsim")
@@ -45,7 +47,8 @@ simsum <-
            mcse = TRUE,
            sanitise = TRUE,
            na.rm = TRUE,
-           na.pair = TRUE) {
+           na.pair = TRUE,
+           x = FALSE) {
     ### Check arguments
     arg_checks <- checkmate::makeAssertCollection()
 
@@ -71,12 +74,13 @@ simsum <-
       add = arg_checks
     )
 
-    # `dropbig`, `mcse`, `sanitise`, `na.rm` , `na.pair` must be single logical value
+    # `dropbig`, `mcse`, `sanitise`, `na.rm` , `na.pair`, `x` must be single logical value
     checkmate::assert_logical(dropbig, len = 1, add = arg_checks)
     checkmate::assert_logical(mcse, len = 1, add = arg_checks)
     checkmate::assert_logical(sanitise, len = 1, add = arg_checks)
     checkmate::assert_logical(na.rm, len = 1, add = arg_checks)
     checkmate::assert_logical(na.pair, len = 1, add = arg_checks)
+    checkmate::assert_logical(x, len = 1, add = arg_checks)
 
     # `by` must be a vector of strings; can be NULL
     checkmate::assert_character(by, null.ok = TRUE, add = arg_checks)
@@ -92,10 +96,11 @@ simsum <-
       checkmate::assert_subset(ref, choices = as.character(unique(data[[methodvar]])), add = arg_checks)
     }
 
-    # `estvarname`, `se`, `methodvar` must not be any in (`stat`, `coef`, `mcse`, `lower`, `upper`)
-    checkmate::assert_false(x = (estvarname %in% c("stat", "coef", "mcse", "lower", "upper")))
-    checkmate::assert_false(x = (se %in% c("stat", "coef", "mcse", "lower", "upper")))
-    if (!is.null(methodvar)) checkmate::assert_false(x = (methodvar %in% c("stat", "coef", "mcse", "lower", "upper")))
+    # `estvarname`, `se`, `methodvar`, `by` must not be any in (`stat`, `est`, `mcse`, `lower`, `upper`)
+    checkmate::assert_false(x = (estvarname %in% c("stat", "est", "mcse", "lower", "upper")))
+    checkmate::assert_false(x = (se %in% c("stat", "est", "mcse", "lower", "upper")))
+    if (!is.null(methodvar)) checkmate::assert_false(x = (methodvar %in% c("stat", "est", "mcse", "lower", "upper")))
+    if (!is.null(by)) checkmate::assert_false(x = any(by %in% c("stat", "est", "mcse", "lower", "upper")))
 
     ### Report if there are any errors
     if (!arg_checks$isEmpty()) {
@@ -336,6 +341,9 @@ simsum <-
     obj$sanitise <- sanitise
     obj$na.rm <- na.rm
     obj$na.pair <- na.pair
+    if (x) {
+      obj$data <- stats::na.omit(data)
+    }
 
     ### Return object of class simsum
     class(obj) <- c("list", "simsum")

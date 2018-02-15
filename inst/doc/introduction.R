@@ -30,7 +30,7 @@ kable(get_data(ss1))
 
 ## ----ex1-plot-bias----------------------------------------------------------------------------------------------------------------------------------
 library(ggplot2)
-ggplot(get_data(ss1, sstat = "bias"), aes(x = method, y = coef, ymin = lower, ymax = upper)) +
+ggplot(get_data(ss1, sstat = "bias"), aes(x = method, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0, color = "red", lty = "dashed") +
   geom_point() +
   geom_errorbar(width = 1 / 3) +
@@ -38,7 +38,7 @@ ggplot(get_data(ss1, sstat = "bias"), aes(x = method, y = coef, ymin = lower, ym
   labs(x = "Method", y = "Bias")
 
 ## ----ex1-plot-cov-----------------------------------------------------------------------------------------------------------------------------------
-ggplot(get_data(ss1, sstat = "cover"), aes(x = method, y = coef, ymin = lower, ymax = upper)) +
+ggplot(get_data(ss1, sstat = "cover"), aes(x = method, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0.95, color = "red", lty = "dashed") +
   geom_point() +
   geom_errorbar(width = 1 / 3) +
@@ -73,7 +73,7 @@ ss2 <- summary(s2)
 ss2
 
 ## ----ex2-plot-bias----------------------------------------------------------------------------------------------------------------------------------
-ggplot(get_data(ss2, sstat = "bias"), aes(x = model, y = coef, ymin = lower, ymax = upper)) +
+ggplot(get_data(ss2, sstat = "bias"), aes(x = model, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0, color = "red", lty = "dashed") +
   geom_point() +
   geom_errorbar(width = 1 / 3) +

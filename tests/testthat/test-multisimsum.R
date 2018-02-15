@@ -2,11 +2,11 @@ context("multisimsum")
 
 test_that("multisimsum prints ok", {
   data("frailty")
-  print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist"))
-  print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", by = "fv_dist"))
-  print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model"))
-  print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se"))
-  print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", mcse = FALSE))
+  expect_output(print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist")))
+  expect_output(print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", by = "fv_dist")))
+  expect_output(print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model")))
+  expect_output(print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se")))
+  expect_output(print(multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", mcse = FALSE)))
 })
 
 test_that("multisimsum returns an object of class multisimsum", {
@@ -130,5 +130,18 @@ test_that("multisimsum works with missing data and default arguments", {
   set.seed(180126)
   x[which(rnorm(nrow(x)) > 2), "b"] <- NA
   x[which(rnorm(nrow(x)) > 2), "se"] <- NA
-  multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist")
+  multisimsum(data = x, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist")
+})
+
+test_that("multisimsum with x = FALSE does not return data", {
+  data("frailty")
+  s <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", x = FALSE)
+  expect_null(object = s$data)
+})
+
+test_that("multisimsum with x = TRUE returns the original dataset (setting all data processing arguments to FALSE is required)", {
+  data("frailty")
+  s <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", x = TRUE, dropbig = FALSE, na.rm = FALSE, na.pair = FALSE)
+  expect_s3_class(object = s$data, class = "data.frame")
+  expect_equal(object = s$data, expected = na.omit(frailty))
 })
