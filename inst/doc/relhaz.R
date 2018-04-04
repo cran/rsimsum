@@ -8,8 +8,8 @@ knitr::opts_chunk$set(
 )
 
 ## ----baseline-hazards-------------------------------------------------------------------------------------------------------------------------------
-exp_basehaz <- function(t, lambda = 0.5) lambda * 1 * t ^ 0
-exp_weibull <- function(t, lambda = 0.5, gamma = 1.5) lambda * gamma * t ^ (gamma - 1)
+exp_basehaz <- function(t, lambda = 0.5) lambda * 1 * t^0
+exp_weibull <- function(t, lambda = 0.5, gamma = 1.5) lambda * gamma * t^(gamma - 1)
 curve(exp_basehaz, from = 0, to = 5, lty = 1, ylim = c(0, 2), ylab = expression(h[0](t)), xlab = "Follow-up time t")
 curve(exp_weibull, from = 0, to = 5, lty = 2, add = TRUE)
 legend(x = "topleft", lty = 1:2, legend = c("Exponential baseline hazard", "Weibull baseline hazard"), bty = "n")
@@ -24,7 +24,7 @@ simulate_data <- function(dataset, n, baseline, params = list(), coveff = -0.50)
   if (baseline == "Exponential") {
     t <- -log(u) / (params$lambda * exp(x * coveff))
   } else {
-    t <- (-log(u) / (params$lambda * exp(x * coveff))) ^ (1 / params$gamma)
+    t <- (-log(u) / (params$lambda * exp(x * coveff)))^(1 / params$gamma)
   }
   # Winsorising tiny values for t (smaller than one day on a yearly-scale, e.g. 1 / 365.242), and adding a tiny amount of white noise not to have too many concurrent values
   t <- ifelse(t < 1 / 365.242, 1 / 365.242, t)
