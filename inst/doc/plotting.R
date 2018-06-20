@@ -111,6 +111,46 @@ heat(s2, par = "fv", sstat = "cover", y = "fv_dist")
 ## ----heat-cover-text-2------------------------------------------------------------------------------------------------------------------------------
 heat(s2, par = "fv", sstat = "cover", y = "fv_dist", text = TRUE)
 
+## ----custom-ordering--------------------------------------------------------------------------------------------------------------------------------
+library(dplyr)
+s1 %>%
+  summary() %>%
+  get_data() %>%
+  mutate(
+    n = as.numeric(n),
+    baseline = factor(baseline, levels = c("Exponential", "Weibull")),
+    model = factor(model, levels = c("Exp", "RP(2)", "Cox"))
+  ) %>%
+  filter(stat == "bias") %>%
+  ggplot(aes(x = est, y = model, xend = 0, yend = model)) +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
+  geom_segment(linetype = "dotted") +
+  geom_point(aes(x = est - 1.96 * mcse), pch = "(") +
+  geom_point(aes(x = est + 1.96 * mcse), pch = ")") +
+  geom_point() +
+  facet_wrap(~ n + baseline, labeller = label_both)
+
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
+lolly(s1, sstat = "bias", by = c("n", "baseline"))
+
+## ----custom-facet-----------------------------------------------------------------------------------------------------------------------------------
+s1 %>%
+  summary() %>%
+  get_data() %>%
+  mutate(
+    n = as.numeric(n),
+    baseline = factor(baseline, levels = c("Exponential", "Weibull")),
+    model = factor(model, levels = c("Exp", "RP(2)", "Cox"))
+  ) %>%
+  filter(stat == "bias") %>%
+  ggplot(aes(x = est, y = model, xend = 0, yend = model)) +
+  geom_vline(xintercept = 0, color = "red", linetype = "dashed") +
+  geom_segment(linetype = "dotted") +
+  geom_point(aes(x = est - 1.96 * mcse), pch = "(") +
+  geom_point(aes(x = est + 1.96 * mcse), pch = ")") +
+  geom_point() +
+  facet_grid(n ~ baseline, labeller = label_both)
+
 ## ----add-geom---------------------------------------------------------------------------------------------------------------------------------------
 pattern(s1) +
   geom_smooth()
