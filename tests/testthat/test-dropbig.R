@@ -1,50 +1,49 @@
-context("dropbig")
+testthat::context("dropbig")
 
-test_that("dropbig works ok and prints fine", {
-  data("MIsim")
-  # when dropbig = TRUE
-  x <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method", mcse = TRUE, dropbig = TRUE, max = 3, semax = 1.5)
-  expect_output(print(dropbig(x)))
-  # when dropbig = FALSE
-  x <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method", mcse = TRUE, dropbig = FALSE)
-  expect_output(print(dropbig(x)))
-  # with huuuuge limits
-  x <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method", mcse = TRUE, dropbig = TRUE, max = 10, semax = 10)
-  expect_output(print(dropbig(x)))
-  # with by factors
-  data("relhaz")
-  x <- simsum(data = relhaz, estvarname = "theta", true = -0.50, se = "se", methodvar = "model", by = c("baseline", "n"), dropbig = TRUE, max = 3, semax = 1.5)
-  expect_output(print(dropbig(x)))
-  # for multisimsum
-  data("frailty")
-  ms <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", dropbig = FALSE)
-  expect_output(print(dropbig(ms)))
-  ms <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", dropbig = TRUE)
-  expect_output(print(dropbig(ms)))
-  ms <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", dropbig = TRUE, max = 6, semax = 3)
-  expect_output(print(dropbig(ms)))
+testthat::test_that("dropbig detects values above 'max'", {
+  set.seed(238746)
+  n <- 1000
+  df <- data.frame(
+    theta = rnorm(n),
+    se = exp(rnorm(n, sd = 0.1))
+  )
+  df$theta[1] <- rnorm(1, mean = 1000)
+  out <- dropbig(data = df, estvarname = "theta", se = "se", methodvar = NULL, by = NULL, robust = FALSE)
+  testthat::expect_equal(object = out$.dropbig[1], expected = TRUE)
+  out <- dropbig(data = df, estvarname = "theta", se = "se", methodvar = NULL, by = NULL, robust = TRUE)
+  testthat::expect_equal(object = out$.dropbig[1], expected = TRUE)
+  # Using robust standardisation is better at detecting outliers:
+  df$theta[1] <- rnorm(1, mean = 500)
+  out <- dropbig(data = df, estvarname = "theta", se = "se", methodvar = NULL, by = NULL, robust = TRUE)
+  testthat::expect_equal(object = out$.dropbig[1], expected = TRUE)
+  df$theta[1] <- rnorm(1, mean = 100)
+  out <- dropbig(data = df, estvarname = "theta", se = "se", methodvar = NULL, by = NULL, robust = TRUE)
+  testthat::expect_equal(object = out$.dropbig[1], expected = TRUE)
+  df$theta[1] <- rnorm(1, mean = 50)
+  out <- dropbig(data = df, estvarname = "theta", se = "se", methodvar = NULL, by = NULL, robust = TRUE)
+  testthat::expect_equal(object = out$.dropbig[1], expected = TRUE)
+  df$theta[1] <- rnorm(1, mean = 25)
+  out <- dropbig(data = df, estvarname = "theta", se = "se", methodvar = NULL, by = NULL, robust = TRUE)
+  testthat::expect_equal(object = out$.dropbig[1], expected = TRUE)
 })
 
-test_that("dropbig returns a data.frame when dropbig = TRUE", {
-  data("MIsim")
-  x <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method", mcse = TRUE, dropbig = TRUE, max = 3, semax = 1.5)
-  d <- dropbig(x)
-  expect_s3_class(object = d$big_estvarname, class = "data.frame")
-  expect_s3_class(object = d$big_se, class = "data.frame")
-  data("frailty")
-  ms <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", dropbig = TRUE, max = 6, semax = 3)
-  d <- dropbig(ms)
-  expect_s3_class(object = d$big_estvarname, class = "data.frame")
-  expect_s3_class(object = d$big_se, class = "data.frame")
-})
 
-test_that("dropbig returns NULL when dropbig = FALSE", {
-  data("MIsim")
-  x <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method", mcse = TRUE, dropbig = FALSE)
-  d <- dropbig(x)
-  expect_null(object = d)
-  data("frailty")
-  ms <- multisimsum(data = frailty, par = "par", true = c(trt = -0.50, fv = 0.75), estvarname = "b", se = "se", methodvar = "model", by = "fv_dist", dropbig = FALSE)
-  d <- dropbig(ms)
-  expect_null(object = d)
+testthat::test_that("dropbig throws errors when appropriate", {
+  set.seed(238746)
+  n <- 1000
+  df <- data.frame(
+    theta = rnorm(n),
+    se = exp(rnorm(n, sd = 0.1))
+  )
+  df$theta[1] <- rnorm(1, mean = 1000)
+  testthat::expect_error(rsimsum::dropbig(data = df))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = 1, se = "se"))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = "theta", se = 1))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = TRUE, se = "se"))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = "theta", se = TRUE))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = "theta", se = "se", methodvar = 1))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = "theta", se = "se", methodvar = TRUE))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = "theta", se = "se", by = 1))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = "theta", se = "se", by = TRUE))
+  testthat::expect_error(object = rsimsum::dropbig(data = df, estvarname = "theta", se = "se", robust = "yeah!"))
 })

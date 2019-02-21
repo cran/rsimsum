@@ -2,15 +2,47 @@
 % Please edit documentation in R/dropbig.R
 \name{dropbig}
 \alias{dropbig}
-\title{Return observations dropped by a function}
+\title{Identify replications with large point estimates, standard errors}
 \usage{
-dropbig(x, ...)
+dropbig(data, estvarname, se, methodvar = NULL, by = NULL, max = 10,
+  semax = 100, robust = TRUE)
 }
 \arguments{
-\item{x}{An object used to select a method.}
+\item{data}{A \code{data.frame} in which variable names are interpreted. It has to be in tidy format, e.g. each variable forms a column and each observation forms a row.}
 
-\item{...}{Further arguments passed to or from other methods.}
+\item{estvarname}{The name of the variable containing the point estimates.}
+
+\item{se}{The name of the variable containing the standard errors of the point estimates.}
+
+\item{methodvar}{The name of the variable containing the methods to compare. For instance, methods could be the models compared within a simulation study. Can be \code{NULL}.}
+
+\item{by}{A vector of variable names to compute performance measures by a list of factors. Factors listed here are the (potentially several) data-generating mechanisms used to simulate data under different scenarios (e.g. sample size, true distribution of a variable, etc.). Can be \code{NULL}.}
+
+\item{max}{Specifies the maximum acceptable absolute value of the point estimates, after standardisation. Defaults to 10.}
+
+\item{semax}{Specifies the maximum acceptable absolute value of the standard error, after standardisation. Defaults to 100.}
+
+\item{robust}{Specifies whether to use robust standardisation (using median and inter-quartile range) rather than normal standardisation (using mean and standard deviation). Defaults to \code{TRUE}.}
+}
+\value{
+The same \code{data.frame} given as input with an additional column named \code{.dropbig} identifying rows that are classified as large (\code{.dropbig = TRUE}) according to the specified criterion.
 }
 \description{
-\code{dropbig} returns observations dropped by a function while performing some calculation - for any reason.
+\code{dropbig} is useful to identify replications with large point estimates or standard errors. Large values are defined as standardised values above a given threshold, as defined when calling \code{dropbig}. Regular standardisation using mean and standard deviation is implemented, as well as robust standardisation using median and inter-quartile range. Further to that, the  standardisation process is stratified by data-generating mechanism if \code{by} factors are defined.
+}
+\examples{
+data("frailty", package = "rsimsum")
+frailty2 <- subset(frailty, par == "fv")
+
+# Using low values of max, semax for illustration purposes:
+dropbig(
+  data = frailty2, estvarname = "b", se = "se",
+  methodvar = "model", by = "fv_dist", max = 2, semax = 2
+)
+
+# Using regular standardisation:
+dropbig(
+  data = frailty2, estvarname = "b", se = "se",
+  methodvar = "model", by = "fv_dist", max = 2, semax = 2, robust = FALSE
+)
 }

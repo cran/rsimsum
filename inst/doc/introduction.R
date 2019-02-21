@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.align = "center", fig.height = 6, fig.width = 6,
-  out.width = "66.66%"
+  out.width = "75%"
 )
 
 ## ----ex1-load-data----------------------------------------------------------------------------------------------------------------------------------
@@ -24,13 +24,16 @@ s1 <- simsum(data = MIsim, estvarname = "b", true = 0.50, se = "se", methodvar =
 ss1 <- summary(s1)
 ss1
 
+## ----ex1-summary-simsum-ci--------------------------------------------------------------------------------------------------------------------------
+print(ss1, mcse = FALSE)
+
 ## ----ex1-table--------------------------------------------------------------------------------------------------------------------------------------
 library(knitr)
 kable(get_data(ss1))
 
 ## ----ex1-plot-bias----------------------------------------------------------------------------------------------------------------------------------
 library(ggplot2)
-ggplot(get_data(ss1, sstat = "bias"), aes(x = method, y = est, ymin = lower, ymax = upper)) +
+ggplot(get_data(ss1, stats = "bias"), aes(x = method, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0, color = "red", lty = "dashed") +
   geom_point() +
   geom_errorbar(width = 1 / 3) +
@@ -38,7 +41,7 @@ ggplot(get_data(ss1, sstat = "bias"), aes(x = method, y = est, ymin = lower, yma
   labs(x = "Method", y = "Bias")
 
 ## ----ex1-plot-cov-----------------------------------------------------------------------------------------------------------------------------------
-ggplot(get_data(ss1, sstat = "cover"), aes(x = method, y = est, ymin = lower, ymax = upper)) +
+ggplot(get_data(ss1, stats = "cover"), aes(x = method, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0.95, color = "red", lty = "dashed") +
   geom_point() +
   geom_errorbar(width = 1 / 3) +
@@ -47,10 +50,10 @@ ggplot(get_data(ss1, sstat = "cover"), aes(x = method, y = est, ymin = lower, ym
   labs(x = "Method", y = "Coverage")
 
 ## ----ex1-dropbig-simsum-----------------------------------------------------------------------------------------------------------------------------
-s1.2 <- simsum(data = MIsim, estvarname = "b", true = 0.50, se = "se", methodvar = "method", ref = "CC", dropbig = TRUE, max = 4, semax = 1.5)
+s1.2 <- simsum(data = MIsim, estvarname = "b", true = 0.50, se = "se", methodvar = "method", ref = "CC", dropbig = TRUE, control = list(dropbig.max = 4, dropbig.semax = 1.5))
 
-## ----ex1-dropbig-dropbig----------------------------------------------------------------------------------------------------------------------------
-dropbig(s1.2)
+## ----ex1-dropbig-nsim-------------------------------------------------------------------------------------------------------------------------------
+summary(s1.2, stats = "nsim")
 
 ## ----ex1-dropbig-summary-simsum---------------------------------------------------------------------------------------------------------------------
 summary(s1.2)
@@ -73,7 +76,7 @@ ss2 <- summary(s2)
 ss2
 
 ## ----ex2-plot-bias----------------------------------------------------------------------------------------------------------------------------------
-ggplot(get_data(ss2, sstat = "bias"), aes(x = model, y = est, ymin = lower, ymax = upper)) +
+ggplot(get_data(ss2, stats = "bias"), aes(x = model, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0, color = "red", lty = "dashed") +
   geom_point() +
   geom_errorbar(width = 1 / 3) +

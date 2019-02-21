@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.align = "center", fig.height = 6, fig.width = 6,
-  out.width = "66.66%"
+  out.width = "75%"
 )
 
 ## ----packages---------------------------------------------------------------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ MIsim %>%
 MIsim %>%
   simsum(estvarname = "b", se = "se", methodvar = "method", true = 0.5) %>%
   summary() %>%
-  get_data(sstat = "bias") %>%
+  get_data(stats = "bias") %>%
   ggplot(aes(x = method, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0, color = "red", lty = "dashed") +
   geom_point() +

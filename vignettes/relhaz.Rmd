@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.align = "center", fig.height = 6, fig.width = 6,
-  out.width = "66.66%"
+  out.width = "75%"
 )
 ```
 
@@ -30,7 +30,7 @@ Say we want to run a simulation study in which we want to compare the sensitivit
 
 # Data generating mechanisms
 
-We simulate an hypotetical trial with a binary treatment. We fix the log-treatment effect to $-0.50$, and we generate a treatment indicator variable for each simulated individual via a $Binom(1, 0.5)$ random variable. We simulate two different sample sizes (50 and 250 individuals) and we assume two different baseline hazard functions: exponential with scale parameter $\lambda = 0.5$, and Weibull with scale parameter $\lambda = 0.5$ and shape parameter $\gamma = 1.5$. Finally, we apply administrative censoring at time $t = 5$.
+We simulate an hypothetical trial with a binary treatment. We fix the log-treatment effect to $-0.50$, and we generate a treatment indicator variable for each simulated individual via a $Binom(1, 0.5)$ random variable. We simulate two different sample sizes (50 and 250 individuals) and we assume two different baseline hazard functions: exponential with scale parameter $\lambda = 0.5$, and Weibull with scale parameter $\lambda = 0.5$ and shape parameter $\gamma = 1.5$. Finally, we apply administrative censoring at time $t = 5$.
 
 ```{r baseline-hazards}
 exp_basehaz <- function(t, lambda = 0.5) lambda * 1 * t^0
@@ -96,19 +96,20 @@ $$\text{MCSE} = \sqrt{\frac{\text{variance}}{\# \text{simulations}}}$$
 
 Aiming for a Monte Carlo standard error of 0.01 on the estimated bias, we would require $1,000$ replications. 
 
-The Monte Carlo standard error for converage is:
+The Monte Carlo standard error for coverage is:
 
 $$\text{MCSE} = \sqrt{\frac{\text{coverage} \times (1 - \text{coverage})}{\# \text{simulations}}}$$
 
 This Monte Carlo standard error is maximised for a coverage = $0.5$. In that setting, the Monte Carlo standard error with $1,000$ replications would be $0.01581139$, which is deemed to be acceptable.
 
-Therefore, we will run $1,000$ replications of this simulation study.
+Therefore, we should run $1,000$ replications of this simulation study.
+However, for simplicity, we will run $100$ replications only to speed up the process.
 
 # Running the simulation study
 
 ## Generate data
 
-We generate $1,000$ datasets for each data-generating mechanism.
+We generate $100$ datasets for each data-generating mechanism.
 
 First, we set a random seed for reproducibility:
 
@@ -119,30 +120,31 @@ set.seed(755353002)
 Then, we simulate the data:
 
 ```{r generate-data}
+reps <- 1:100
 data <- list()
 data[["n = 50, baseline = Exp"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 50,
   baseline = "Exponential",
   params = list(lambda = 0.5)
 )
 data[["n = 250, baseline = Exp"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 250,
   baseline = "Exponential",
   params = list(lambda = 0.5)
 )
 data[["n = 50, baseline = Wei"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 50,
   baseline = "Weibull",
   params = list(lambda = 0.5, gamma = 1.5)
 )
 data[["n = 250, baseline = Wei"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 250,
   baseline = "Weibull",
@@ -299,8 +301,8 @@ row.names(relhaz) <- NULL
 We save the final results, that will be included as an example in the R package `rsimsum`.
 
 ```{r saving, eval = FALSE}
-library(devtools)
-devtools::use_data(relhaz, overwrite = TRUE)
+library(usethis)
+usethis::use_data(relhaz, overwrite = TRUE)
 ```
 
 ## Summarising results
@@ -309,7 +311,7 @@ Finally, we obtain summary statistics by calling the `simsum` function:
 
 ```{r compute-summaries}
 library(rsimsum)
-s <- rsimsum::simsum(data = relhaz, estvarname = "theta", se = "se", true = -0.50, methodvar = "model", ref = "Cox", mcse = TRUE, by = c("n", "baseline"))
+s <- rsimsum::simsum(data = relhaz, estvarname = "theta", se = "se", true = -0.50, methodvar = "model", ref = "Cox", by = c("n", "baseline"))
 s
 ```
 

@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.align = "center", fig.height = 6, fig.width = 6,
-  out.width = "66.66%"
+  out.width = "75%"
 )
 
 ## ----baseline-hazards-------------------------------------------------------------------------------------------------------------------------------
@@ -43,30 +43,31 @@ simulate_data <- function(dataset, n, baseline, params = list(), coveff = -0.50)
 set.seed(755353002)
 
 ## ----generate-data----------------------------------------------------------------------------------------------------------------------------------
+reps <- 1:100
 data <- list()
 data[["n = 50, baseline = Exp"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 50,
   baseline = "Exponential",
   params = list(lambda = 0.5)
 )
 data[["n = 250, baseline = Exp"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 250,
   baseline = "Exponential",
   params = list(lambda = 0.5)
 )
 data[["n = 50, baseline = Wei"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 50,
   baseline = "Weibull",
   params = list(lambda = 0.5, gamma = 1.5)
 )
 data[["n = 250, baseline = Wei"]] <- lapply(
-  X = 1:1000,
+  X = reps,
   FUN = simulate_data,
   n = 250,
   baseline = "Weibull",
@@ -209,12 +210,12 @@ relhaz <- do.call(
 row.names(relhaz) <- NULL
 
 ## ----saving, eval = FALSE---------------------------------------------------------------------------------------------------------------------------
-#  library(devtools)
-#  devtools::use_data(relhaz, overwrite = TRUE)
+#  library(usethis)
+#  usethis::use_data(relhaz, overwrite = TRUE)
 
 ## ----compute-summaries------------------------------------------------------------------------------------------------------------------------------
 library(rsimsum)
-s <- rsimsum::simsum(data = relhaz, estvarname = "theta", se = "se", true = -0.50, methodvar = "model", ref = "Cox", mcse = TRUE, by = c("n", "baseline"))
+s <- rsimsum::simsum(data = relhaz, estvarname = "theta", se = "se", true = -0.50, methodvar = "model", ref = "Cox", by = c("n", "baseline"))
 s
 
 ## ----print-summaries--------------------------------------------------------------------------------------------------------------------------------
