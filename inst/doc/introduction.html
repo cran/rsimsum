@@ -12,7 +12,7 @@
 
 <meta name="author" content="Alessandro Gasparini" />
 
-<meta name="date" content="2019-02-21" />
+<meta name="date" content="2019-03-15" />
 
 <title>Introduction to rsimsum</title>
 
@@ -291,6 +291,9 @@ code > span.al { color: #ff0000; font-weight: bold; }
 code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
+
+
+
 </head>
 
 <body>
@@ -299,8 +302,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 <h1 class="title toc-ignore">Introduction to rsimsum</h1>
-<h4 class="author"><em>Alessandro Gasparini</em></h4>
-<h4 class="date"><em>2019-02-21</em></h4>
+<h4 class="author">Alessandro Gasparini</h4>
+<h4 class="date">2019-03-15</h4>
 
 
 
@@ -332,11 +335,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>The <strong>empirical standard error</strong> of <span class="math inline">\(\theta\)</span> depends only on <span class="math inline">\(\hat{\theta}\)</span> and does not require any knowledge of <span class="math inline">\(\theta\)</span>. It estimates the standard deviation of <span class="math inline">\(\hat{\theta}\)</span> over the <span class="math inline">\(n_{\text{sim}}\)</span> replications:</p>
 <p><span class="math display">\[\text{Empirical SE} = \sqrt{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \bar{\theta}) ^ 2}\]</span></p>
 <p>The Monte Carlo standard error is calculated as:</p>
-<p><span class="math display">\[\text{MCSE(Emp. SE)} = \frac{\text{Emp. SE}}{\sqrt{2 (n_{\text{sim}} - 1)}}\]</span></p>
+<p><span class="math display">\[\text{MCSE(Emp. SE)} = \frac{\widehat{\text{Emp. SE}}}{\sqrt{2 (n_{\text{sim}} - 1)}}\]</span></p>
 <p>When comparing different methods, the <strong>relative precision of a given method B against a reference method A</strong> is computed as:</p>
-<p><span class="math display">\[\text{Relative % increase in precision} = \left( \frac{\text{Emp. SE}_A}{\text{Emp. SE}_B} \right) ^ 2\]</span></p>
+<p><span class="math display">\[\text{Relative % increase in precision} = 100 \left[ \left( \frac{\widehat{\text{Emp. SE}}_A}{\widehat{\text{Emp. SE}}_B} \right) ^ 2 - 1 \right]\]</span></p>
 <p>Its (approximated) Monte Carlo standard error is:</p>
-<p><span class="math display">\[\text{MCSE(Relative % increase in precision)} \simeq 2 \frac{\text{Var}(\hat{\theta}_A)}{\text{Var}(\hat{\theta}_B)} \sqrt{\frac{1 - \rho^2_{AB}}{n_{\text{sim}} - 1}}\]</span></p>
+<p><span class="math display">\[\text{MCSE(Relative % increase in precision)} \simeq 200 \left( \frac{\widehat{\text{Emp. SE}}_A}{\widehat{\text{Emp. SE}}_B} \right) \sqrt{\frac{1 - \rho^2_{AB}}{n_{\text{sim}} - 1}}\]</span></p>
 <p><span class="math inline">\(\rho^2_{AB}\)</span> is the correlation of <span class="math inline">\(\hat{\theta}_A\)</span> and <span class="math inline">\(\hat{\theta}_B\)</span>.</p>
 <p>A measure that takes into account both precision and accuracy of a method is the <strong>mean squared error</strong>, which is the sum of the squared bias and variance of <span class="math inline">\(\hat{\theta}\)</span>:</p>
 <p><span class="math display">\[\text{MSE} = \frac{1}{n_{\text{sim}}} = \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \theta) ^ 2\]</span></p>
@@ -446,8 +449,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb5-32" title="32"><span class="co">#&gt;  0.1511 (0.0034) 0.1320 (0.0030) 0.1344 (0.0030)</span></a>
 <a class="sourceLine" id="cb5-33" title="33"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb5-34" title="34"><span class="co">#&gt; % gain in precision relative to method CC:</span></a>
-<a class="sourceLine" id="cb5-35" title="35"><span class="co">#&gt;               CC         MI_LOGT            MI_T</span></a>
-<a class="sourceLine" id="cb5-36" title="36"><span class="co">#&gt;  1.0000 (0.0000) 1.3105 (0.0394) 1.2637 (0.0384)</span></a>
+<a class="sourceLine" id="cb5-35" title="35"><span class="co">#&gt;               CC          MI_LOGT             MI_T</span></a>
+<a class="sourceLine" id="cb5-36" title="36"><span class="co">#&gt;  0.0000 (0.0000) 31.0463 (3.9375) 26.3682 (3.8424)</span></a>
 <a class="sourceLine" id="cb5-37" title="37"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb5-38" title="38"><span class="co">#&gt; Mean squared error:</span></a>
 <a class="sourceLine" id="cb5-39" title="39"><span class="co">#&gt;               CC         MI_LOGT            MI_T</span></a>
@@ -506,8 +509,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb6-31" title="31"><span class="co">#&gt;  0.1511 (0.1445, 0.1577) 0.1320 (0.1262, 0.1378) 0.1344 (0.1285, 0.1403)</span></a>
 <a class="sourceLine" id="cb6-32" title="32"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb6-33" title="33"><span class="co">#&gt; % gain in precision relative to method CC:</span></a>
-<a class="sourceLine" id="cb6-34" title="34"><span class="co">#&gt;                       CC                 MI_LOGT                    MI_T</span></a>
-<a class="sourceLine" id="cb6-35" title="35"><span class="co">#&gt;  1.0000 (1.0000, 1.0000) 1.3105 (1.2333, 1.3876) 1.2637 (1.1884, 1.3390)</span></a>
+<a class="sourceLine" id="cb6-34" title="34"><span class="co">#&gt;                       CC                    MI_LOGT                       MI_T</span></a>
+<a class="sourceLine" id="cb6-35" title="35"><span class="co">#&gt;  0.0000 (0.0000, 0.0000) 31.0463 (23.3290, 38.7636) 26.3682 (18.8372, 33.8991)</span></a>
 <a class="sourceLine" id="cb6-36" title="36"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb6-37" title="37"><span class="co">#&gt; Mean squared error:</span></a>
 <a class="sourceLine" id="cb6-38" title="38"><span class="co">#&gt;                       CC                 MI_LOGT                    MI_T</span></a>
@@ -623,11 +626,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tr>
 <tr class="odd">
 <td align="left">relprec</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
 <td align="right">0.0000000</td>
 <td align="left">CC</td>
-<td align="right">1.0000000</td>
-<td align="right">1.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
 </tr>
 <tr class="even">
 <td align="left">modelse</td>
@@ -735,11 +738,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tr>
 <tr class="odd">
 <td align="left">relprec</td>
-<td align="right">1.3104634</td>
-<td align="right">0.0393747</td>
+<td align="right">31.0463410</td>
+<td align="right">3.9374726</td>
 <td align="left">MI_LOGT</td>
-<td align="right">1.2332904</td>
-<td align="right">1.3876365</td>
+<td align="right">23.3290364</td>
+<td align="right">38.7636456</td>
 </tr>
 <tr class="even">
 <td align="left">modelse</td>
@@ -847,11 +850,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tr>
 <tr class="odd">
 <td align="left">relprec</td>
-<td align="right">1.2636816</td>
-<td align="right">0.0384238</td>
+<td align="right">26.3681613</td>
+<td align="right">3.8423791</td>
 <td align="left">MI_T</td>
-<td align="right">1.1883724</td>
-<td align="right">1.3389909</td>
+<td align="right">18.8372366</td>
+<td align="right">33.8990859</td>
 </tr>
 <tr class="even">
 <td align="left">modelse</td>
@@ -968,8 +971,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb12-31" title="31"><span class="co">#&gt;  0.1493 (0.0034) 0.1320 (0.0030) 0.1323 (0.0030)</span></a>
 <a class="sourceLine" id="cb12-32" title="32"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb12-33" title="33"><span class="co">#&gt; % gain in precision relative to method CC:</span></a>
-<a class="sourceLine" id="cb12-34" title="34"><span class="co">#&gt;               CC         MI_LOGT            MI_T</span></a>
-<a class="sourceLine" id="cb12-35" title="35"><span class="co">#&gt;  1.0000 (0.0000) 1.2799 (0.0394) 1.2746 (0.0403)</span></a>
+<a class="sourceLine" id="cb12-34" title="34"><span class="co">#&gt;               CC          MI_LOGT             MI_T</span></a>
+<a class="sourceLine" id="cb12-35" title="35"><span class="co">#&gt;  0.0000 (0.0000) 27.9890 (3.9442) 27.4611 (4.0317)</span></a>
 <a class="sourceLine" id="cb12-36" title="36"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb12-37" title="37"><span class="co">#&gt; Mean squared error:</span></a>
 <a class="sourceLine" id="cb12-38" title="38"><span class="co">#&gt;               CC         MI_LOGT            MI_T</span></a>
@@ -1100,11 +1103,11 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb17-53" title="53"><span class="co">#&gt;      Weibull 250 0.1333 (0.0095) 0.0929 (0.0066) 0.1368 (0.0097)</span></a>
 <a class="sourceLine" id="cb17-54" title="54"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb17-55" title="55"><span class="co">#&gt; % gain in precision relative to method Cox:</span></a>
-<a class="sourceLine" id="cb17-56" title="56"><span class="co">#&gt;     baseline   n             Cox             Exp           RP(2)</span></a>
-<a class="sourceLine" id="cb17-57" title="57"><span class="co">#&gt;  Exponential  50 1.0000 (0.0000) 1.0168 (0.0329) 0.9838 (0.0179)</span></a>
-<a class="sourceLine" id="cb17-58" title="58"><span class="co">#&gt;  Exponential 250 1.0000 (0.0000) 0.9762 (0.0305) 0.9985 (0.0099)</span></a>
-<a class="sourceLine" id="cb17-59" title="59"><span class="co">#&gt;      Weibull  50 1.0000 (0.0000) 2.3280 (0.1644) 1.0024 (0.0374)</span></a>
-<a class="sourceLine" id="cb17-60" title="60"><span class="co">#&gt;      Weibull 250 1.0000 (0.0000) 2.0584 (0.1249) 0.9505 (0.0206)</span></a>
+<a class="sourceLine" id="cb17-56" title="56"><span class="co">#&gt;     baseline   n              Cox                Exp            RP(2)</span></a>
+<a class="sourceLine" id="cb17-57" title="57"><span class="co">#&gt;  Exponential  50 -0.0000 (0.0000)    1.6773 (3.2902) -1.6228 (1.7887)</span></a>
+<a class="sourceLine" id="cb17-58" title="58"><span class="co">#&gt;  Exponential 250  0.0000 (0.0000)   -2.3839 (3.0501) -0.1491 (0.9916)</span></a>
+<a class="sourceLine" id="cb17-59" title="59"><span class="co">#&gt;      Weibull  50 -0.0000 (0.0000) 132.7958 (16.4433)  0.2412 (3.7361)</span></a>
+<a class="sourceLine" id="cb17-60" title="60"><span class="co">#&gt;      Weibull 250 -0.0000 (0.0000) 105.8426 (12.4932) -4.9519 (2.0647)</span></a>
 <a class="sourceLine" id="cb17-61" title="61"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb17-62" title="62"><span class="co">#&gt; Mean squared error:</span></a>
 <a class="sourceLine" id="cb17-63" title="63"><span class="co">#&gt;     baseline   n             Cox             Exp           RP(2)</span></a>
