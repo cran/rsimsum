@@ -1,5 +1,5 @@
 Package: rsimsum
-Version: 0.5.1
+Version: 0.5.2
 Title: Analysis of Simulation Studies Including Monte Carlo Error
 Description: Summarise results from simulation studies and compute Monte Carlo
   standard errors of commonly used summary statistics. This package is modelled 
@@ -29,10 +29,10 @@ ByteCompile: true
 Encoding: UTF-8
 Language: en-GB
 NeedsCompilation: no
-Packaged: 2019-03-15 11:49:26 UTC; ellessenne
+Packaged: 2019-04-25 17:17:47 UTC; ellessenne
 Author: Alessandro Gasparini [aut, cre]
     (<https://orcid.org/0000-0002-8319-7624>),
   Ian R. White [aut]
 Maintainer: Alessandro Gasparini <ag475@leicester.ac.uk>
 Repository: CRAN
-Date/Publication: 2019-03-15 12:10:03 UTC
+Date/Publication: 2019-04-25 17:40:03 UTC
