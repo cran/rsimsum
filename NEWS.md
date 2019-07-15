@@ -1,3 +1,21 @@
+# rsimsum 0.6.0
+
+### Improvements:
+
+* Implemented fully automated nested loop plots for simulation studies with several data-generating mechanisms: `autoplot(object, type = "nlp")`;
+
+* Added `data("nlp", package = "rsimsum")`, a dataset from a simulation study with 150 data-generating. This is particularly useful to illustrate nested loop plots;
+
+* Added a new vignette on nested loop plots;
+
+* Improved ordering of vignettes.
+
+### Bug fixes:
+
+* Updated unquoting for compatibility with `rlang` 0.4.0;
+
+* Fixed missing details and options in the documentation of `autoplot.multisimsum` and `autoplot.summary.multisimsum`.
+
 # rsimsum 0.5.2
 
 ### Bug fixes:
