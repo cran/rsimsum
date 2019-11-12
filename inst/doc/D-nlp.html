@@ -13,7 +13,7 @@
 
 <meta name="author" content="Alessandro Gasparini" />
 
-<meta name="date" content="2019-09-12" />
+<meta name="date" content="2019-11-12" />
 
 <title>Nested loop plots</title>
 
@@ -306,7 +306,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Nested loop plots</h1>
 <h4 class="author">Alessandro Gasparini</h4>
-<h4 class="date">2019-09-12</h4>
+<h4 class="date">2019-11-12</h4>
 
 
 
@@ -332,14 +332,15 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt; &#39;ref&#39; method was not specified, 1 set as the reference</span></span>
 <span id="cb4-6"><a href="#cb4-6"></a>s</span>
 <span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; Summary of a simulation study with a single estimand.</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; </span></span>
-<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; Method variable: model </span></span>
-<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt;  Unique methods: 1, 2 </span></span>
-<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt;  Reference method: 1 </span></span>
-<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt; </span></span>
-<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; By factors: baseline, ss, esigma </span></span>
-<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt; </span></span>
-<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt; Monte Carlo standard errors were computed.</span></span></code></pre></div>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; True value of the estimand: 0 </span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt; </span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt; Method variable: model </span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt;  Unique methods: 1, 2 </span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt;  Reference method: 1 </span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt; </span></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt; By factors: baseline, ss, esigma </span></span>
+<span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt; </span></span>
+<span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt; Monte Carlo standard errors were computed.</span></span></code></pre></div>
 <p>Finally, a nested loop plot can be automatically produced via the <code>autoplot</code> method, e.g. for bias:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">library</span>(ggplot2)</span>
 <span id="cb5-2"><a href="#cb5-2"></a><span class="kw">autoplot</span>(s, <span class="dt">type =</span> <span class="st">&quot;nlp&quot;</span>, <span class="dt">stats =</span> <span class="st">&quot;bias&quot;</span>)</span></code></pre></div>

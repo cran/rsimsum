@@ -6,8 +6,10 @@ testthat::test_that("simsum prints ok", {
   testthat::expect_output(print(rsimsum::simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method")))
   testthat::expect_output(print(rsimsum::simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se")))
   testthat::expect_output(print(rsimsum::simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", control = list(mcse = FALSE))))
+  testthat::expect_output(print(rsimsum::simsum(data = MIsim, estvarname = "b", se = "se")))
   testthat::expect_output(print(rsimsum::simsum(data = relhaz, estvarname = "theta", true = -0.5, se = "se", methodvar = "model", by = c("n", "baseline"))))
   testthat::expect_output(print(rsimsum::simsum(data = relhaz, estvarname = "theta", true = -0.5, se = "se", by = c("n", "baseline"))))
+  testthat::expect_output(print(rsimsum::simsum(data = relhaz, estvarname = "theta", se = "se")))
 })
 
 testthat::test_that("simsum returns an object of class simsum", {
@@ -23,38 +25,33 @@ testthat::test_that("summ slot of a simsum object is a data.frame", {
 })
 
 testthat::test_that("not passing estvarname throws an error", {
-  testthat::expect_error({
-    data("MIsim", package = "rsimsum")
-    s <- rsimsum::simsum(data = MIsim, true = 0.5, se = "se", methodvar = "method", ref = "CC")
-  }, 'argument "estvarname" is missing, with no default')
-})
-
-testthat::test_that("not passing true throws an error", {
-  testthat::expect_error({
-    data("MIsim", package = "rsimsum")
-    s <- rsimsum::simsum(data = MIsim, estvarname = "b", se = "se", methodvar = "method", ref = "CC")
-  }, 'argument "true" is missing, with no default')
-})
-
-testthat::test_that("not passing se throws an error", {
-  testthat::expect_error({
-    data("MIsim", package = "rsimsum")
-    s <- rsimsum::simsum(data = MIsim, estvarname = "b", true = 0.5, methodvar = "method", ref = "CC")
-  }, 'argument "se" is missing, with no default')
+  testthat::expect_error(
+    {
+      data("MIsim", package = "rsimsum")
+      s <- rsimsum::simsum(data = MIsim, true = 0.5, se = "se", methodvar = "method", ref = "CC")
+    },
+    'argument "estvarname" is missing, with no default'
+  )
 })
 
 testthat::test_that("specifying ref and not methodvar throws a warning", {
-  testthat::expect_warning({
-    data("MIsim", package = "rsimsum")
-    s <- rsimsum::simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", ref = "CC")
-  }, "'ref' method is specified while 'methodvar' is not: 'ref' will be ignored")
+  testthat::expect_warning(
+    {
+      data("MIsim", package = "rsimsum")
+      s <- rsimsum::simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", ref = "CC")
+    },
+    "'ref' method is specified while 'methodvar' is not: 'ref' will be ignored"
+  )
 })
 
 testthat::test_that("specifying methodvar and not ref shows a message", {
-  testthat::expect_message({
-    data("MIsim", package = "rsimsum")
-    s <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method")
-  }, "'ref' method was not specified, CC set as the reference")
+  testthat::expect_message(
+    {
+      data("MIsim", package = "rsimsum")
+      s <- simsum(data = MIsim, estvarname = "b", true = 0.5, se = "se", methodvar = "method")
+    },
+    "'ref' method was not specified, CC set as the reference"
+  )
 })
 
 testthat::test_that("running simsum on MIsim return summaries of the correct dimension", {
@@ -132,4 +129,27 @@ testthat::test_that("simsum with dropbig = TRUE does drop all the big stuff", {
   expected <- .na_pair(data = expected, estvarname = "b", se = "se")
   expected$method <- factor(expected$method)
   testthat::expect_equivalent(object = s$x, expected = expected)
+  s <- simsum(data = MIsim, estvarname = "b", true = 0.5, methodvar = "method", x = TRUE, dropbig = TRUE, control = list(dropbig.max = 3, dropbig.robust = FALSE))
+  expected <- .dropbig(data = MIsim, estvarname = "b", methodvar = "method", by = NULL, robust = FALSE, max = 3)
+  expected <- .na_pair(data = expected, estvarname = "b")
+  expected$method <- factor(expected$method)
+  testthat::expect_equivalent(object = s$x, expected = expected)
+})
+
+testthat::test_that("simsum without 'true' does not compute bias, cover, mse", {
+  data("MIsim", package = "rsimsum")
+  s <- simsum(data = MIsim, estvarname = "b", se = "se", methodvar = "method")
+  testthat::expect_false(object = any(c("bias", "cover", "mse") %in% s$summ$stat))
+})
+
+testthat::test_that("simsum without 'se' does not compute se2mean, se2median, modelse, relerror, cover, becover, power", {
+  data("MIsim", package = "rsimsum")
+  s <- simsum(data = MIsim, estvarname = "b", true = 0.5, methodvar = "method")
+  testthat::expect_false(object = any(c("se2mean", "se2median", "modelse", "relerror", "cover", "becover", "power") %in% s$summ$stat))
+})
+
+testthat::test_that("simsum without 'se' nor 'true' does not compute se2mean, se2median, modelse, relerror, cover, becover, power, bias, mse", {
+  data("MIsim", package = "rsimsum")
+  s <- simsum(data = MIsim, estvarname = "b", methodvar = "method")
+  testthat::expect_false(object = any(c("se2mean", "se2median", "modelse", "relerror", "cover", "becover", "power", "bias", "mse") %in% s$summ$stat))
 })

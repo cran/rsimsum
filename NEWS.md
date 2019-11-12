@@ -1,3 +1,17 @@
+# rsimsum 0.7.0
+
+### Improvements:
+
+* Passing the true value of an estimand (`true` argument) is no longer required; if `true` is not passed to `simsum` or `multisimsum`, bias, coverage, and mean squared error are not computed;
+
+* Passing estimated standard errors per replication (`se` argument) is no longer required; if so, average and median variances, model-based standard errors, relative error, coverage probability, bias-eliminated coverage probability, power are not computed.
+
+# rsimsum 0.6.2
+
+### Bug fixes:
+
+* Fixed bug introduced in `rsimsum` 0.6.1 (average and median variances were not printed).
+
 # rsimsum 0.6.1
 
 ### Bug fixes:
