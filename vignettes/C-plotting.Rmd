@@ -16,8 +16,8 @@ options(width = 150)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.align = "center", fig.height = 3, fig.width = 5,
-  out.width = "80%"
+  fig.align = "center", fig.height = 5, fig.width = 7,
+  out.width = "90%"
 )
 ```
 
@@ -154,15 +154,21 @@ autoplot(summary(s1), type = "forest", stats = "bias")
 
 # Zipper plots
 
-Zipper plots (or zip plots), introduced in Morris _et al_. (2019), help understand coverage by visualising the confidence intervals directly. For each data-generating mechanism and method, the confidence intervals are centile-ranked according to their significance against the null hypothesis \(H_0: \theta = \theta_{\text{true}}\), assessed via a Wald-type test. This ranking is used for the vertical axis and is plotted against the intervals themselves.
+Zipper plots (or zip plots), introduced in Morris _et al_. (2019), help understand coverage by visualising the confidence intervals directly. For each data-generating mechanism and method, the confidence intervals are centile-ranked according to their significance against the null hypothesis \(H_0: \theta\) = \(\theta_{\text{true}}\), assessed via a Wald-type test. This ranking is used for the vertical axis and is plotted against the intervals themselves.
 
-When a method has \(95\%\) coverage, the colour of the intervals switches at 95 on the vertical axis. Finally, the horizontal lines represent confidence intervals for the estimated coverage based on Monte Carlo standard errors.
+When a method has 95% coverage, the colour of the intervals switches at 95 on the vertical axis. Finally, the horizontal lines represent confidence intervals for the estimated coverage based on Monte Carlo standard errors.
 
 ```{r zipper-1}
 autoplot(s1, type = "zip")
 ```
 
-The zipper plot for the exponential model with \(n = 50\) and a true Weibull baseline hazard shows that coverage is approximately \(95\%\); however, there are more intervals to the right of \(\theta = -0.50\) than to the left: this indicates that the model standard errors must be overestimating the empirical standard error, because coverage is appropriate despite bias.
+The zipper plot for the exponential model with n = 50 and a true Weibull baseline hazard shows that coverage is approximately 95%; however, there are more intervals to the right of \(\theta\) = -0.50 than to the left: this indicates that the model standard errors must be overestimating the empirical standard error, because coverage is appropriate despite bias.
+
+It is also possible to _zoom_ on the top x% of the zip plot to increase readability, e.g. on the top 30%:
+
+```{r zipper-zoom}
+autoplot(s1, type = "zip", zoom = 0.3)
+```
 
 # Heat plots
 
@@ -176,6 +182,35 @@ This visualisation type automatically puts all data-generating mechanisms on the
 
 By default, heat plots use the default `ggplot` scale for the filling aesthetic.
 It is recommended to use a different colour palette with better characteristics, e.g. the viridis colour palette from `matplotlib`; see the next section for details on how to do this, and [here](https://cran.r-project.org/package=viridis/vignettes/intro-to-viridis.html) for details on the viridis colour palette.
+
+# Contour plots and hexbin plots
+
+Individual point estimates and standard errors could also be plotted using contour plots or hexbin plots.
+
+Contour plots represent a 3-dimensional surface by plotting constant z slices (called contours) on a 2-dimensional format.
+That is, given a value for z, lines are drawn for connecting the (x, y) coordinates where the value of z is (relatively) homogenous.
+
+Hexbin plots are useful to represent the relationship of 2 numerical variables when you have a lot of data points: instead of overlapping, the plotting window is split in several hexbins, and the number of points per hexbin is counted.
+The colour filling denotes then the number of points.
+
+Both plots provide an alternative to scatter plots when there is a large number of data points that overlap. 
+Contour plots and hexbin plots can be easily obtained using the `autoplot` method once again, and using the argument `type = "est_density"`, `type = "se_density"`, `type = "est_hex"`, or `type = "se_hex"`:
+
+```{r plot-est-density}
+autoplot(s1, type = "est_density")
+```
+
+```{r plot-se-density}
+autoplot(s1, type = "se_density")
+```
+
+```{r plot-est-hex}
+autoplot(s1, type = "est_hex")
+```
+
+```{r plot-se-hex}
+autoplot(s1, type = "se_hex")
+```
 
 # Custom plotting
 

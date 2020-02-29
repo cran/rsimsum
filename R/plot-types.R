@@ -2,8 +2,13 @@
 #' @keywords internal
 .forest_plot <- function(data, methodvar, by, stats, ci, target, scales) {
   ### Build basic plot
-  methodvar <- rlang::sym(methodvar)
-  gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = {{ methodvar }}, y = est)) +
+  if (!is.null(methodvar)) {
+    methodvar <- rlang::sym(methodvar)
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = {{ methodvar }}, y = est))
+  } else {
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = "Single Method", y = est))
+  }
+  gg <- gg +
     ggplot2::geom_hline(yintercept = target, linetype = "dotted") +
     ggplot2::geom_point() +
     ggplot2::labs(y = stats)
@@ -29,10 +34,17 @@
 #' @keywords internal
 .lolly_plot <- function(data, methodvar, by, stats, ci, target, scales) {
   ### Build basic plot
-  methodvar <- rlang::sym(methodvar)
-  gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = est, y = {{ methodvar }})) +
-    ggplot2::geom_vline(xintercept = target, linetype = "dotted") +
-    ggplot2::geom_segment(aes(xend = target, yend = {{ methodvar }})) +
+  if (!is.null(methodvar)) {
+    methodvar <- rlang::sym(methodvar)
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = est, y = {{ methodvar }})) +
+      ggplot2::geom_vline(xintercept = target, linetype = "dotted") +
+      ggplot2::geom_segment(aes(xend = target, yend = {{ methodvar }}))
+  } else {
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = est, y = "Single Method")) +
+      ggplot2::geom_vline(xintercept = target, linetype = "dotted") +
+      ggplot2::geom_segment(aes(xend = target, yend = "Single Method"))
+  }
+  gg <- gg +
     ggplot2::geom_point() +
     ggplot2::labs(x = stats)
 
@@ -45,9 +57,15 @@
 
   ### Add confidence intervals if we are calling autoplot on a summary object
   if (ci) {
-    gg <- gg +
-      ggplot2::geom_point(ggplot2::aes(x = lower, y = {{ methodvar }}), shape = 40) +
-      ggplot2::geom_point(ggplot2::aes(x = upper, y = {{ methodvar }}), shape = 41)
+    if (!is.null(methodvar)) {
+      gg <- gg +
+        ggplot2::geom_point(ggplot2::aes(x = lower, y = {{ methodvar }}), shape = 40) +
+        ggplot2::geom_point(ggplot2::aes(x = upper, y = {{ methodvar }}), shape = 41)
+    } else {
+      gg <- gg +
+        ggplot2::geom_point(ggplot2::aes(x = lower, y = "Single Method"), shape = 40) +
+        ggplot2::geom_point(ggplot2::aes(x = upper, y = "Single Method"), shape = 41)
+    }
   }
 
   ### Return plot
@@ -56,7 +74,7 @@
 
 ### Zip plot
 #' @keywords internal
-.zip_plot <- function(data, estvarname, se, true, methodvar, by, control, summ) {
+.zip_plot <- function(data, estvarname, se, true, methodvar, by, control, summ, zoom) {
   ### Extract overall coverage
   summ <- summ[summ$stat == "cover", ]
   summ$cover <- summ$est
@@ -110,16 +128,24 @@
     theme(legend.position = "bottom")
 
   ### If 'by', use facet_grid; facet_wrap otherwise
-  if (!is.null(by)) {
+  if (!is.null(by) & !is.null(methodvar)) {
     by <- rlang::syms(by)
     methodvar <- rlang::sym(methodvar)
     gg <- gg +
       ggplot2::facet_grid(cols = ggplot2::vars(!!!{{ by }}), rows = ggplot2::vars({{ methodvar }}), labeller = ggplot2::labeller(.rows = ggplot2::label_value, .cols = ggplot2::label_both))
-  } else {
+  } else if (is.null(by) & !is.null(methodvar)) {
     methodvar <- rlang::sym(methodvar)
     gg <- gg +
       ggplot2::facet_wrap(facets = ggplot2::vars({{ methodvar }}))
+  } else if (!is.null(by) & is.null(methodvar)) {
+    by <- rlang::syms(by)
+    gg <- gg +
+      ggplot2::facet_wrap(facets = ggplot2::vars({{ by }}))
   }
+
+  ### Zoom (or not)
+  gg <- gg +
+    ggplot2::coord_cartesian(ylim = c(1 - zoom, 1))
 
   ### Return plot
   return(gg)
@@ -128,34 +154,8 @@
 ### Method vs method; supports Bland-Altman type plots
 #' @keywords internal
 .vs_plot <- function(data, b, methodvar, by, fitted, scales, ba) {
-  ### Identify combinations of methodvar
-  cs <- t(utils::combn(x = unique(data[[methodvar]]), m = 2))
-  colnames(cs) <- c("X", "Y")
-
-  ### Split data by 'by' factors
-  data_split <- .split_by(data = data, by = by)
-
-  ### Restructure data
-  internal_df <- list()
-  for (i in seq_along(data_split)) {
-    tmp <- list()
-    for (j in seq(nrow(cs))) {
-      tmp[[j]] <- data.frame(
-        X = data_split[[i]][[b]][data_split[[i]][[methodvar]] == cs[j, "X"]],
-        Y = data_split[[i]][[b]][data_split[[i]][[methodvar]] == cs[j, "Y"]],
-        contrast = ifelse(ba, paste0(cs[j, "X"], " vs ", cs[j, "Y"]), paste0("X: ", cs[j, "X"], " vs Y: ", cs[j, "Y"])),
-        row.names = NULL
-      )
-    }
-    tmp <- .br(tmp)
-    if (!is.null(by)) {
-      for (byval in by) {
-        tmp[[byval]] <- unique(data_split[[i]][[byval]])
-      }
-    }
-    internal_df[[i]] <- tmp
-  }
-  internal_df <- .br(internal_df)
+  ### Compute internal df
+  internal_df <- .make_internal_df(data = data, b = b, methodvar = methodvar, by = by)
 
   ### if Bland-Altman type plot, replace X and Y for mean and diff
   if (ba) {
@@ -222,8 +222,13 @@
 
   ### Build plot
   b <- rlang::sym(b)
-  methodvar <- rlang::sym(methodvar)
-  gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = !!{{ b }}, y = .dgm, color = {{ methodvar }}, fill = {{ methodvar }})) +
+  if (!is.null(methodvar)) {
+    methodvar <- rlang::sym(methodvar)
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = !!{{ b }}, y = .dgm, color = {{ methodvar }}, fill = {{ methodvar }}))
+  } else {
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = !!{{ b }}, y = .dgm))
+  }
+  gg <- gg +
     ggridges::geom_density_ridges(alpha = 0.25) +
     ggplot2::labs(y = "")
 
@@ -243,8 +248,13 @@
   }
 
   ### Build basic plot
-  methodvar <- rlang::sym(methodvar)
-  gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = {{ methodvar }}, y = .dgm, fill = est)) +
+  if (!is.null(methodvar)) {
+    methodvar <- rlang::sym(methodvar)
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = {{ methodvar }}, y = .dgm, fill = est))
+  } else {
+    gg <- ggplot2::ggplot(data = data, ggplot2::aes(x = "Single Method", y = .dgm, fill = est))
+  }
+  gg <- gg +
     ggplot2::geom_tile() +
     ggplot2::labs(y = "", fill = stats)
 
@@ -289,10 +299,17 @@
   }
 
   ### Build basic plot
-  methodvar <- rlang::sym(methodvar)
-  gg <- ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = .scenario, y = est, group = !!methodvar)) +
-    ggplot2::geom_hline(yintercept = target, linetype = "dotted") +
-    ggplot2::geom_step(mapping = ggplot2::aes(color = !!methodvar)) +
+  if (!is.null(methodvar)) {
+    methodvar <- rlang::sym(methodvar)
+    gg <- ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = .scenario, y = est, group = !!methodvar)) +
+      ggplot2::geom_hline(yintercept = target, linetype = "dotted") +
+      ggplot2::geom_step(mapping = ggplot2::aes(color = !!methodvar))
+  } else {
+    gg <- ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = .scenario, y = est)) +
+      ggplot2::geom_hline(yintercept = target, linetype = "dotted") +
+      ggplot2::geom_step()
+  }
+  gg <- gg +
     ggplot2::labs(x = paste0(paste(vapply(X = by, FUN = function(x) length(levels(data[[x]])), FUN.VALUE = numeric(1)), collapse = " x "), " = ", max(data[[".scenario"]]), " ordered scenarios"), y = stats)
 
   ### Build and add legends of nested loop plot
@@ -301,6 +318,49 @@
     gg <- gg +
       ggplot2::geom_step(mapping = ggplot2::aes(y = !!.tmp)) +
       ggplot2::annotate(geom = "text", x = 1, y = placement[[i]][2] + delta / 2, label = paste0(by[i], ": ", paste(levels(data[[by[i]]]), collapse = ", ")), hjust = 0, vjust = 0.5)
+  }
+
+  ### Return plot
+  return(gg)
+}
+
+#' @keywords internal
+.density_plot <- function(data, b, methodvar, by, fitted, scales, hex, density.legend) {
+  ### Compute internal df
+  internal_df <- .make_internal_df(data = data, b = b, methodvar = methodvar, by = by)
+
+  ### Build plot
+  caption <- paste0("Comparison of variable '", b, "'")
+  gg <- ggplot2::ggplot(data = internal_df, ggplot2::aes(x = X, y = Y)) +
+    ggplot2::labs(caption = caption, fill = "Count")
+
+  ### Add layer with contour or hexbin plot
+  if (hex) {
+    gg <- gg +
+      ggplot2::geom_hex(show.legend = density.legend)
+  } else {
+    gg <- gg +
+      ggplot2::stat_density_2d(mapping = ggplot2::aes(fill = stat(level)), geom = "polygon", show.legend = density.legend)
+  }
+
+  ### Add reference line
+  gg <- gg +
+    ggplot2::geom_abline(slope = 1, intercept = 0, linetype = "dashed")
+
+  ### If 'by', use facet_grid; facet_wrap otherwise
+  if (!is.null(by)) {
+    by <- rlang::syms(by)
+    gg <- gg +
+      ggplot2::facet_grid(cols = ggplot2::vars(!!!{{ by }}), rows = ggplot2::vars(contrast), scales = scales, labeller = ggplot2::labeller(.rows = ggplot2::label_value, .cols = ggplot2::label_both))
+  } else {
+    gg <- gg +
+      ggplot2::facet_wrap(~contrast)
+  }
+
+  ### If 'fitted' add regression line
+  if (fitted) {
+    gg <- gg +
+      ggplot2::geom_smooth(method = "lm")
   }
 
   ### Return plot
