@@ -28,9 +28,15 @@ s3 <- simsum(data = tt, estvarname = "diff", true = -1, se = "se", ci.limits = c
 summary(s3, stats = "cover")
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
+s4 <- simsum(data = tt, estvarname = "diff", true = -1, se = "se", df = "df", methodvar = "method", by = "dgm")
+
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
+all.equal(get_data(s1), get_data(s4))
+
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
 tt$true <- -1
-s4 <- simsum(data = tt, estvarname = "diff", true = "true", se = "se", ci.limits = c("lower", "upper"), methodvar = "method", by = "dgm")
-summary(s4, stats = "cover")
+s5 <- simsum(data = tt, estvarname = "diff", true = "true", se = "se", ci.limits = c("lower", "upper"), methodvar = "method", by = "dgm")
+summary(s5, stats = "cover")
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
 summary(s2, stats = "cover")
@@ -62,12 +68,15 @@ summary(ms2, stats = "bias")
 identical(get_data(ms1), get_data(ms2))
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
+frailty$lower <- frailty$b - qt(1 - 0.05 / 2, df = 10) * frailty$se
+frailty$upper <- frailty$b + qt(1 - 0.05 / 2, df = 10) * frailty$se
+
 ms3 <- multisimsum(
   data = frailty,
   par = "par", true = "true",
   estvarname = "b", se = "se", methodvar = "model",
   by = "fv_dist",
-  ci.limits = c(-1, 1)
+  ci.limits = c("lower", "upper")
 )
 summary(ms3, stats = "cover")
 

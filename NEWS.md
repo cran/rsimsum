@@ -1,3 +1,39 @@
+# rsimsum 0.9.0
+
+### Breaking changes:
+
+* The control argument `df` has been renamed to `power_df`, and now affects power calculations only.
+
+### New features:
+
+* New `df` argument, `simsum` and `multisimum` now accept a column in `data` containing a number of degrees of freedom that will be used to calculate confidence intervals for coverage (and bias-eliminated coverage) with t critical values (instead of normal-theory intervals, the default behaviour).
+  Notably, zip plots behave accordingly when calculating and ranking confidence intervals;
+
+* Calculations for zip plots are noticeably faster now;
+
+* Added a simple `kable` method for objects of class `simsum`, `summary.simsum`, `multisimsum`, `summary.multisimsum` to ease the creation of LaTeX/HTML/Markdown/reStructuredText tables.
+
+### Bug fixes:
+
+* Fixed a bug that prevented zip plots with only `by` factors from being plotted.
+
+# rsimsum 0.8.1
+
+### Changes to default behaviour:
+
+* `autoplot` methods will now plot the number of non-missing point estimates/SEs by default (if the `stat` argument is not set by the user).
+  The previous default was to plot bias, which might not always be available anymore since `rsimsum 0.8.0`.
+
+### Improvements:
+
+* Handling more plotting edge cases, for instance when standard errors or true values are not available;
+
+* Improved `multisimsum` example in vignette on custom inputs.
+
+### Bug fixes:
+
+* Fixed typo in vignette with formulae (#25, thanks @samperochkin).
+
 # rsimsum 0.8.0
 
 ### Improvements:
