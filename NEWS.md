@@ -1,3 +1,18 @@
+# rsimsum 0.10.0
+
+### Breaking changes:
+
+* `get_data()` is now deprecated in favour of `tidy()`; `get_data()` still works (and is fully tested), but now throws a warning and will be fully removed some time in the future.
+
+### New features:
+
+* `simsum()` and `multisimsum()` now accept multiple column inputs that identify unique methods (see e.g. #24, #30).
+  Internally, this combines the unique values from each column factorially using the `interaction()` function; then, methods are analysed and reported as such. 
+  See `vignette("E-custom-inputs", package = "rsimsum")` for some examples.
+
+* Two new datasets, `MIsim2` and `frailty2`, are now bundled with `rsimsum` to test the new functionality introduced above.
+  They correspond to `MIsim` and `frailty`, respectively, with the only difference being that the (single) column identifying methods is now split into two distinct columns.
+
 # rsimsum 0.9.1
 
 ### Bug fixes:

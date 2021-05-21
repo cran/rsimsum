@@ -77,10 +77,10 @@ s4 <- simsum(data = tt, estvarname = "diff", true = -1, se = "se", df = "df", me
 Given that the confidence intervals in (`lower`, `upper`) are obtained by using critical values from a t distribution, the results of `s4` will be equivalent to the results of `s1`:
 
 ```{r}
-all.equal(get_data(s1), get_data(s4))
+all.equal(tidy(s1), tidy(s4))
 ```
 
-Finally, we can pass a column of values for `true` as well:
+We can pass a column of values for `true` as well:
 
 ```{r}
 tt$true <- -1
@@ -92,6 +92,36 @@ Compare with the default settings:
 
 ```{r}
 summary(s2, stats = "cover")
+```
+
+Finally, we could have multiple columns identifying methods as well.
+This uses the `MIsim` and `MIsim2` datasets, which are bundled with {rsimsum}:
+
+```{r}
+data("MIsim", package = "rsimsum")
+data("MIsim2", package = "rsimsum")
+head(MIsim)
+head(MIsim2)
+```
+
+The syntax when calling `simsum()` is pretty much the same:
+
+```{r}
+s6 <- simsum(data = MIsim, estvarname = "b", true = 0.50, se = "se", methodvar = "method")
+s7 <- simsum(data = MIsim2, estvarname = "b", true = 0.50, se = "se", methodvar = c("m1", "m2"))
+```
+
+See the inferred methods:
+
+```{r}
+print(s6)
+print(s7)
+```
+
+And of course, the estimated performance measures are the same:
+
+```{r}
+all.equal(tidy(s6)$est, tidy(s7)$est)
 ```
 
 # Multiple Estimands at Once
@@ -134,7 +164,7 @@ summary(ms2, stats = "bias")
 We can confirm that we obtain the same results with the two approaches:
 
 ```{r}
-identical(get_data(ms1), get_data(ms2))
+identical(tidy(ms1), tidy(ms2))
 ```
 
 This approach is particularly useful when the true value might vary across replications (e.g. when it depends on the simulated dataset).
@@ -160,3 +190,5 @@ This will be completely different than before:
 ```{r}
 summary(ms2, stats = "cover")
 ```
+
+Multiple columns identifying methods are supported with `multisimsum()` as well; examples are omitted here, but it works analogously as with `simsum()`.

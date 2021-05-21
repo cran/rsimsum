@@ -78,7 +78,7 @@ autoplot.simsum <- function(object, type = "forest", stats = "nsim", target = NU
   if (type == "lolly" & stats %in% c("thetamean", "thetamedian") & !is.numeric(object[["true"]])) stop("Lolly plot not available for average/median point estimates if 'true' is not defined (as a single numeric value)", call. = FALSE)
 
   ### Extract data
-  df <- get_data(object, stats = stats)
+  df <- tidy(object, stats = stats)
 
   ### Infer target
   if (is.null(target)) {
@@ -93,6 +93,15 @@ autoplot.simsum <- function(object, type = "forest", stats = "nsim", target = NU
 
   ### Add CI if it is a summary object
   ci <- inherits(x = object, what = "summary.simsum")
+
+  ### Process if string of methods columns to be combined
+  user_methodvar <- NULL
+  if (length(object$methodvar) > 1) {
+    reftable <- .compact_method_columns(data = df, methodvar = object$methodvar)$reftable
+    df <- .compact_method_columns(data = df, methodvar = object$methodvar)$data
+    object$user_methodvar <- object$methodvar
+    object$methodvar <- ":methodvar"
+  }
 
   ### Call internal function to build plot
   plot <- switch(type,

@@ -18,14 +18,14 @@ data("MIsim", package = "rsimsum")
 MIsim %>%
   simsum(estvarname = "b", se = "se", methodvar = "method", true = 0.5) %>%
   summary() %>%
-  get_data() %>%
+  tidy() %>%
   kable()
 
 ## ----plot-------------------------------------------------------------------------------------------------------------------------------------------
 MIsim %>%
   simsum(estvarname = "b", se = "se", methodvar = "method", true = 0.5) %>%
   summary() %>%
-  get_data(stats = "bias") %>%
+  tidy(stats = "bias") %>%
   ggplot(aes(x = method, y = est, ymin = lower, ymax = upper)) +
   geom_hline(yintercept = 0, color = "red", lty = "dashed") +
   geom_point() +
