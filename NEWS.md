@@ -1,3 +1,22 @@
+# rsimsum 0.11.0
+
+### New features:
+
+* `print.summary.simsum()` now return (invisibly) a list with each section of the output, e.g. by performance measure.
+  This is useful for printing small sections of the output, e.g. using `kable()` (thanks @ge-li, see discussion in #22):
+  ```r
+  library(rsimsum)
+  s2 <- simsum(data = relhaz, estvarname = "theta", true = -0.50, se = "se", methodvar = "model", by = c("baseline", "n"))
+  out <- print(summary(s2, stats = "bias"))
+  library(knitr)
+  kable(out[[1]], caption = names(out)[1], align = "r")
+  ```
+  This is implemented for `print.summary.multisimsum()` as well, with an additional level of nesting (by parameter).
+  
+### Bux fixes:
+
+* Fixed some broken links to vignettes (introduced a bunch of time ago when renaming the `.Rmd` files), thanks to @remlapmot for reporting this (#36).
+
 # rsimsum 0.10.1
 
 ### Bug fixes:

@@ -45,7 +45,7 @@
 A \code{ggplot} object.
 }
 \description{
-\code{autoplot} can produce a series of plot to summarise results of simulation studies. See \code{vignette("plotting", package = "rsimsum")} for further details.
+\code{autoplot} can produce a series of plot to summarise results of simulation studies. See \code{vignette("C-plotting", package = "rsimsum")} for further details.
 }
 \examples{
 data("frailty", package = "rsimsum")
@@ -61,5 +61,4 @@ autoplot(ms, par = "trt")
 autoplot(ms, par = "trt", type = "lolly", stats = "cover")
 autoplot(ms, par = "trt", type = "zip")
 autoplot(ms, par = "trt", type = "est_ba")
-autoplot(ms, par = "trt", type = "zip")
 }

@@ -85,10 +85,10 @@ autoplot(summary(s1), type = "lolly", stats = "bias")
 
 ## ----heat-bias-viridis------------------------------------------------------------------------------------------------------------------------------
 autoplot(s1, type = "heat", stats = "bias") +
-  viridis::scale_fill_viridis()
+  ggplot2::scale_fill_viridis_c()
 
 ## ----colour-palette---------------------------------------------------------------------------------------------------------------------------------
 autoplot(s1, type = "est_ridge") +
-  viridis::scale_fill_viridis(discrete = TRUE) +
-  viridis::scale_colour_viridis(discrete = TRUE)
+  scale_fill_viridis_d() +
+  scale_colour_viridis_d()
 
