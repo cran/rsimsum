@@ -12,7 +12,7 @@
 
 <meta name="author" content="Alessandro Gasparini" />
 
-<meta name="date" content="2022-01-04" />
+<meta name="date" content="2022-03-22" />
 
 <title>rsimsum and the tidyverse</title>
 
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -333,7 +334,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">rsimsum and the tidyverse</h1>
 <h4 class="author">Alessandro Gasparini</h4>
-<h4 class="date">2022-01-04</h4>
+<h4 class="date">2022-03-22</h4>
 
 
 
@@ -350,7 +351,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span></code></pre></div>
-<p>For instance, it is possible to chain functions using the piping operator <code>%&gt;%</code> to obtain tables and plots with a single call:</p>
+<p>For instance, it is possible to chain functions using the piping
+operator <code>%&gt;%</code> to obtain tables and plots with a single
+call:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;MIsim&quot;</span>, <span class="at">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>MIsim <span class="sc">%&gt;%</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">simsum</span>(<span class="at">estvarname =</span> <span class="st">&quot;b&quot;</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="at">true =</span> <span class="fl">0.5</span>) <span class="sc">%&gt;%</span></span>

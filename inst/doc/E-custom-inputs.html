@@ -12,7 +12,7 @@
 
 <meta name="author" content="Alessandro Gasparini" />
 
-<meta name="date" content="2022-01-04" />
+<meta name="date" content="2022-03-22" />
 
 <title>Custom input values for confidence intervals and true values</title>
 
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -331,16 +332,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Custom input values for confidence intervals and true values</h1>
+<h1 class="title toc-ignore">Custom input values for confidence
+intervals and true values</h1>
 <h4 class="author">Alessandro Gasparini</h4>
-<h4 class="date">2022-01-04</h4>
+<h4 class="date">2022-03-22</h4>
 
 
 
 <div id="single-estimand" class="section level1">
 <h1>Single Estimand</h1>
-<p><code>rsimsum</code> supports custom input values for the true value of the estimand and for confidence intervals limits (used to calculate coverage probability).</p>
-<p>To illustrate this feature, we can use the <code>tt</code> dataset (bundled with <code>rsimsum</code>):</p>
+<p><code>rsimsum</code> supports custom input values for the true value
+of the estimand and for confidence intervals limits (used to calculate
+coverage probability).</p>
+<p>To illustrate this feature, we can use the <code>tt</code> dataset
+(bundled with <code>rsimsum</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsimsum)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;tt&quot;</span>, <span class="at">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tt)</span>
@@ -351,7 +356,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 -3.359683 2.016465 -7.458611  0.73924596 33.78117     1   2      2</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 -2.989333 1.150093 -5.274900 -0.70376532 88.00000     1   3      1</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 -1.152852 1.368553 -3.872563  1.56685875 88.00000     1   4      1</span></span></code></pre></div>
-<p>This includes the results of a simulation study assessing robustness of the t-test when estimating the difference between means. The t-test assumes a t distribution, hence confidence intervals for the estimated mean are generally based on the t distribution. See for instance the example from the t-test documentation (<code>?t.test</code>):</p>
+<p>This includes the results of a simulation study assessing robustness
+of the t-test when estimating the difference between means. The t-test
+assumes a t distribution, hence confidence intervals for the estimated
+mean are generally based on the t distribution. See for instance the
+example from the t-test documentation (<code>?t.test</code>):</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(extra <span class="sc">~</span> group, <span class="at">data =</span> sleep)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Welch Two Sample t-test</span></span>
@@ -364,7 +373,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; sample estimates:</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mean in group 1 mean in group 2 </span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            0.75            2.33</span></span></code></pre></div>
-<p>We can incorporate custom confidence intervals by passing the name of two columns in <code>data</code> as the <code>ci.limits</code> argument:</p>
+<p>We can incorporate custom confidence intervals by passing the name of
+two columns in <code>data</code> as the <code>ci.limits</code>
+argument:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>s1 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> tt, <span class="at">estvarname =</span> <span class="st">&quot;diff&quot;</span>, <span class="at">true =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">ci.limits =</span> <span class="fu">c</span>(<span class="st">&quot;lower&quot;</span>, <span class="st">&quot;upper&quot;</span>), <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="at">by =</span> <span class="st">&quot;dgm&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &#39;ref&#39; method was not specified, 1 set as the reference</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(s1, <span class="at">stats =</span> <span class="st">&quot;cover&quot;</span>)</span>
@@ -377,7 +388,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2 0.8780 (0.0146) 0.9420 (0.0105)</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3 0.9380 (0.0108) 0.9500 (0.0097)</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    4 0.9020 (0.0133) 0.9420 (0.0105)</span></span></code></pre></div>
-<p>By doing so, we can incorporate different types of confidence intervals in the analysis of Monte Carlo simulation studies. Compare with the default setting:</p>
+<p>By doing so, we can incorporate different types of confidence
+intervals in the analysis of Monte Carlo simulation studies. Compare
+with the default setting:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> tt, <span class="at">estvarname =</span> <span class="st">&quot;diff&quot;</span>, <span class="at">true =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="at">by =</span> <span class="st">&quot;dgm&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &#39;ref&#39; method was not specified, 1 set as the reference</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(s2, <span class="at">stats =</span> <span class="st">&quot;cover&quot;</span>)</span>
@@ -390,8 +403,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2 0.8680 (0.0151) 0.9320 (0.0113)</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3 0.9380 (0.0108) 0.9420 (0.0105)</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    4 0.8940 (0.0138) 0.9360 (0.0109)</span></span></code></pre></div>
-<p>The <code>ci.limits</code> is also useful when using non-symmetrical confidence intervals, e.g. when using bootstrapped confidence intervals.</p>
-<p>A pair of values can also be passed to <code>rsimsum</code> as the <code>ci.limits</code> argument:</p>
+<p>The <code>ci.limits</code> is also useful when using non-symmetrical
+confidence intervals, e.g. when using bootstrapped confidence
+intervals.</p>
+<p>A pair of values can also be passed to <code>rsimsum</code> as the
+<code>ci.limits</code> argument:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>s3 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> tt, <span class="at">estvarname =</span> <span class="st">&quot;diff&quot;</span>, <span class="at">true =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">ci.limits =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">1.5</span>, <span class="sc">-</span><span class="fl">0.5</span>), <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="at">by =</span> <span class="st">&quot;dgm&quot;</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &#39;ref&#39; method was not specified, 1 set as the reference</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(s3, <span class="at">stats =</span> <span class="st">&quot;cover&quot;</span>)</span>
@@ -404,11 +420,19 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2 1.0000 (0.0000) 1.0000 (0.0000)</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3 1.0000 (0.0000) 1.0000 (0.0000)</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    4 1.0000 (0.0000) 1.0000 (0.0000)</span></span></code></pre></div>
-<p>If you have a better example of the utility of this method please <a href="https://twitter.com/ellessenne">get in touch</a> - I’d love to hear from you!</p>
-<p>By default, <code>simsum</code> will calculate confidence intervals using normal-theory, Wald-type intervals. It is possible to use t-based critical values by providing a column for the (replication-specific) degrees of freedom (analogously as passing confidence bounds to <code>ci.limits</code>):</p>
+<p>If you have a better example of the utility of this method please <a href="https://twitter.com/ellessenne">get in touch</a> - I’d love to
+hear from you!</p>
+<p>By default, <code>simsum</code> will calculate confidence intervals
+using normal-theory, Wald-type intervals. It is possible to use t-based
+critical values by providing a column for the (replication-specific)
+degrees of freedom (analogously as passing confidence bounds to
+<code>ci.limits</code>):</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>s4 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> tt, <span class="at">estvarname =</span> <span class="st">&quot;diff&quot;</span>, <span class="at">true =</span> <span class="sc">-</span><span class="dv">1</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">df =</span> <span class="st">&quot;df&quot;</span>, <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="at">by =</span> <span class="st">&quot;dgm&quot;</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &#39;ref&#39; method was not specified, 1 set as the reference</span></span></code></pre></div>
-<p>Given that the confidence intervals in (<code>lower</code>, <code>upper</code>) are obtained by using critical values from a t distribution, the results of <code>s4</code> will be equivalent to the results of <code>s1</code>:</p>
+<p>Given that the confidence intervals in (<code>lower</code>,
+<code>upper</code>) are obtained by using critical values from a t
+distribution, the results of <code>s4</code> will be equivalent to the
+results of <code>s1</code>:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">all.equal</span>(<span class="fu">tidy</span>(s1), <span class="fu">tidy</span>(s4))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>We can pass a column of values for <code>true</code> as well:</p>
@@ -436,7 +460,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    2 0.8680 (0.0151) 0.9320 (0.0113)</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3 0.9380 (0.0108) 0.9420 (0.0105)</span></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    4 0.8940 (0.0138) 0.9360 (0.0109)</span></span></code></pre></div>
-<p>Finally, we could have multiple columns identifying methods as well. This uses the <code>MIsim</code> and <code>MIsim2</code> datasets, which are bundled with {rsimsum}:</p>
+<p>Finally, we could have multiple columns identifying methods as well.
+This uses the <code>MIsim</code> and <code>MIsim2</code> datasets, which
+are bundled with {rsimsum}:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;MIsim&quot;</span>, <span class="at">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;MIsim2&quot;</span>, <span class="at">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(MIsim)</span>
@@ -459,7 +485,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4       2 CC    &quot;&quot;     0.349 0.160</span></span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5       2 MI    &quot;T&quot;    0.406 0.141</span></span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6       2 MI    &quot;LOGT&quot; 0.429 0.136</span></span></code></pre></div>
-<p>The syntax when calling <code>simsum()</code> is pretty much the same:</p>
+<p>The syntax when calling <code>simsum()</code> is pretty much the
+same:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>s6 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> MIsim, <span class="at">estvarname =</span> <span class="st">&quot;b&quot;</span>, <span class="at">true =</span> <span class="fl">0.50</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &#39;ref&#39; method was not specified, CC set as the reference</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>s7 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> MIsim2, <span class="at">estvarname =</span> <span class="st">&quot;b&quot;</span>, <span class="at">true =</span> <span class="fl">0.50</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">methodvar =</span> <span class="fu">c</span>(<span class="st">&quot;m1&quot;</span>, <span class="st">&quot;m2&quot;</span>))</span>
@@ -492,7 +519,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="multiple-estimands-at-once" class="section level1">
 <h1>Multiple Estimands at Once</h1>
-<p><code>multisimsum</code> can be as flexible as <code>simsum</code>. Remember the default behaviour:</p>
+<p><code>multisimsum</code> can be as flexible as <code>simsum</code>.
+Remember the default behaviour:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;frailty&quot;</span>, <span class="at">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>ms1 <span class="ot">&lt;-</span> <span class="fu">multisimsum</span>(</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> frailty,</span>
@@ -521,8 +549,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     fv_dist       Cox, Gamma  Cox, Log-Normal     RP(P), Gamma RP(P), Log-Normal</span></span>
 <span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Gamma -0.0006 (0.0016) -0.0013 (0.0016) -0.0003 (0.0016)  -0.0015 (0.0016)</span></span>
 <span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Log-Normal -0.0006 (0.0015) -0.0014 (0.0015) -0.0006 (0.0015)  -0.0016 (0.0015)</span></span></code></pre></div>
-<p>In this example, we pass the true values of each estimand as the named vector <code>c(trt = -0.50, fv = 0.75)</code>.</p>
-<p>Say instead we stored the true value of each estimand as a column in our dataset:</p>
+<p>In this example, we pass the true values of each estimand as the
+named vector <code>c(trt = -0.50, fv = 0.75)</code>.</p>
+<p>Say instead we stored the true value of each estimand as a column in
+our dataset:</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>frailty<span class="sc">$</span>true <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(frailty<span class="sc">$</span>par <span class="sc">==</span> <span class="st">&quot;trt&quot;</span>, <span class="sc">-</span><span class="fl">0.50</span>, <span class="fl">0.75</span>)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(frailty)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   i         b        se par    fv_dist             model true</span></span>
@@ -532,7 +562,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 1 0.8410503 0.1804898  fv      Gamma RP(P), Log-Normal 0.75</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 1 0.6394722 0.1223808  fv Log-Normal        Cox, Gamma 0.75</span></span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 1 0.7573628 0.1235062  fv Log-Normal   Cox, Log-Normal 0.75</span></span></code></pre></div>
-<p>With this data structure, we can pass a string value to <code>multisimsum</code> that will identify the <code>true</code> column in our dataset:</p>
+<p>With this data structure, we can pass a string value to
+<code>multisimsum</code> that will identify the <code>true</code> column
+in our dataset:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ms2 <span class="ot">&lt;-</span> <span class="fu">multisimsum</span>(</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> frailty,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">par =</span> <span class="st">&quot;par&quot;</span>, <span class="at">true =</span> <span class="st">&quot;true&quot;</span>,</span>
@@ -560,11 +592,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     fv_dist       Cox, Gamma  Cox, Log-Normal     RP(P), Gamma RP(P), Log-Normal</span></span>
 <span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Gamma -0.0006 (0.0016) -0.0013 (0.0016) -0.0003 (0.0016)  -0.0015 (0.0016)</span></span>
 <span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Log-Normal -0.0006 (0.0015) -0.0014 (0.0015) -0.0006 (0.0015)  -0.0016 (0.0015)</span></span></code></pre></div>
-<p>We can confirm that we obtain the same results with the two approaches:</p>
+<p>We can confirm that we obtain the same results with the two
+approaches:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(<span class="fu">tidy</span>(ms1), <span class="fu">tidy</span>(ms2))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>This approach is particularly useful when the true value might vary across replications (e.g. when it depends on the simulated dataset).</p>
-<p>Of course, it can be combined with custom confidence interval limits for coverage as well:</p>
+<p>This approach is particularly useful when the true value might vary
+across replications (e.g. when it depends on the simulated dataset).</p>
+<p>Of course, it can be combined with custom confidence interval limits
+for coverage as well:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>frailty<span class="sc">$</span>lower <span class="ot">&lt;-</span> frailty<span class="sc">$</span>b <span class="sc">-</span> <span class="fu">qt</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.05</span> <span class="sc">/</span> <span class="dv">2</span>, <span class="at">df =</span> <span class="dv">10</span>) <span class="sc">*</span> frailty<span class="sc">$</span>se</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>frailty<span class="sc">$</span>upper <span class="ot">&lt;-</span> frailty<span class="sc">$</span>b <span class="sc">+</span> <span class="fu">qt</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="fl">0.05</span> <span class="sc">/</span> <span class="dv">2</span>, <span class="at">df =</span> <span class="dv">10</span>) <span class="sc">*</span> frailty<span class="sc">$</span>se</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -617,7 +652,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     fv_dist      Cox, Gamma Cox, Log-Normal    RP(P), Gamma RP(P), Log-Normal</span></span>
 <span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Gamma 0.9500 (0.0069) 0.9490 (0.0070) 0.9506 (0.0070)   0.9500 (0.0069)</span></span>
 <span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Log-Normal 0.9410 (0.0075) 0.9420 (0.0074) 0.9428 (0.0074)   0.9430 (0.0073)</span></span></code></pre></div>
-<p>Multiple columns identifying methods are supported with <code>multisimsum()</code> as well; examples are omitted here, but it works analogously as with <code>simsum()</code>.</p>
+<p>Multiple columns identifying methods are supported with
+<code>multisimsum()</code> as well; examples are omitted here, but it
+works analogously as with <code>simsum()</code>.</p>
 </div>
 
 

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Alessandro Gasparini" />
 
-<meta name="date" content="2022-01-04" />
+<meta name="date" content="2022-03-22" />
 
 <title>Introduction to rsimsum</title>
 
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function(e) {
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -333,81 +334,170 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Introduction to rsimsum</h1>
 <h4 class="author">Alessandro Gasparini</h4>
-<h4 class="date">2022-01-04</h4>
+<h4 class="date">2022-03-22</h4>
 
 
 
 <div id="rsimsum" class="section level1">
 <h1>rsimsum</h1>
-<p><code>rsimsum</code> is an R package that can compute summary statistics from simulation studies. It is a port to R of the user-written command <code>simsum</code> in Stata (White I.R., 2010).</p>
-<p>The aim of <code>rsimsum</code> is helping reporting of simulation studies, including understanding the role of chance in results of simulation studies. Specifically, <code>rsimsum</code> can compute Monte Carlo standard errors of summary statistics, defined as the standard deviation of the estimated summary statistic.</p>
-<p>Formula for summary statistics and Monte Carlo standard errors are presented in the next section.</p>
+<p><code>rsimsum</code> is an R package that can compute summary
+statistics from simulation studies. It is a port to R of the
+user-written command <code>simsum</code> in Stata (White I.R.,
+2010).</p>
+<p>The aim of <code>rsimsum</code> is helping reporting of simulation
+studies, including understanding the role of chance in results of
+simulation studies. Specifically, <code>rsimsum</code> can compute Monte
+Carlo standard errors of summary statistics, defined as the standard
+deviation of the estimated summary statistic.</p>
+<p>Formula for summary statistics and Monte Carlo standard errors are
+presented in the next section.</p>
 </div>
 <div id="notation" class="section level1">
 <h1>Notation</h1>
 <p>We will use th following notation throughout this vignette:</p>
 <ul>
-<li><span class="math inline">\(\theta\)</span>: an estimand, and its true value</li>
-<li><span class="math inline">\(n_{\text{sim}}\)</span>: number of simulations</li>
-<li><span class="math inline">\(i = 1, \dots, n_{\text{sim}}\)</span>: indexes a given simulation</li>
-<li><span class="math inline">\(\hat{\theta}_i\)</span>: the estimated value of <span class="math inline">\(\theta\)</span> for the <span class="math inline">\(i^{\text{th}}\)</span> replication</li>
-<li><span class="math inline">\(\widehat{\text{Var}}(\hat{\theta}_i)\)</span>: the estimated variance <span class="math inline">\(\text{Var}(\hat{\theta}_i)\)</span> of <span class="math inline">\(\hat{\theta}_i\)</span> for the <span class="math inline">\(i^{\text{th}}\)</span> replication</li>
-<li><span class="math inline">\(\text{Var}(\hat{\theta})\)</span>: the empirical variance of <span class="math inline">\(\hat{\theta}\)</span></li>
-<li><span class="math inline">\(\alpha\)</span>: the nominal significance level</li>
+<li><span class="math inline">\(\theta\)</span>: an estimand, and its
+true value</li>
+<li><span class="math inline">\(n_{\text{sim}}\)</span>: number of
+simulations</li>
+<li><span class="math inline">\(i = 1, \dots, n_{\text{sim}}\)</span>:
+indexes a given simulation</li>
+<li><span class="math inline">\(\hat{\theta}_i\)</span>: the estimated
+value of <span class="math inline">\(\theta\)</span> for the <span class="math inline">\(i^{\text{th}}\)</span> replication</li>
+<li><span class="math inline">\(\widehat{\text{Var}}(\hat{\theta}_i)\)</span>: the
+estimated variance <span class="math inline">\(\text{Var}(\hat{\theta}_i)\)</span> of <span class="math inline">\(\hat{\theta}_i\)</span> for the <span class="math inline">\(i^{\text{th}}\)</span> replication</li>
+<li><span class="math inline">\(\text{Var}(\hat{\theta})\)</span>: the
+empirical variance of <span class="math inline">\(\hat{\theta}\)</span></li>
+<li><span class="math inline">\(\alpha\)</span>: the nominal
+significance level</li>
 </ul>
 </div>
 <div id="summary-statistics" class="section level1">
 <h1>Summary statistics</h1>
-<p>The first summary statistic of interest is <strong>bias</strong>, which quantifies whether the estimator targets the true value <span class="math inline">\(\theta\)</span> on average. Bias is calculated as:</p>
-<p><span class="math display">\[\text{Bias} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} \hat{\theta}_i - \theta\]</span></p>
+<p>The first summary statistic of interest is <strong>bias</strong>,
+which quantifies whether the estimator targets the true value <span class="math inline">\(\theta\)</span> on average. Bias is calculated
+as:</p>
+<p><span class="math display">\[\text{Bias} = \frac{1}{n_{\text{sim}}}
+\sum_{i = 1} ^ {n_{\text{sim}}} \hat{\theta}_i - \theta\]</span></p>
 <p>The Monte Carlo standard error of bias is calculated as:</p>
-<p><span class="math display">\[\text{MCSE(Bias)} = \sqrt{\frac{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \bar{\theta}) ^ 2}{n_{\text{sim}}}}\]</span></p>
-<p>The <strong>empirical standard error</strong> of <span class="math inline">\(\theta\)</span> depends only on <span class="math inline">\(\hat{\theta}\)</span> and does not require any knowledge of <span class="math inline">\(\theta\)</span>. It estimates the standard deviation of <span class="math inline">\(\hat{\theta}\)</span> over the <span class="math inline">\(n_{\text{sim}}\)</span> replications:</p>
-<p><span class="math display">\[\text{Empirical SE} = \sqrt{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \bar{\theta}) ^ 2}\]</span></p>
+<p><span class="math display">\[\text{MCSE(Bias)} =
+\sqrt{\frac{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}}
+(\hat{\theta}_i - \bar{\theta}) ^ 2}{n_{\text{sim}}}}\]</span></p>
+<p>The <strong>empirical standard error</strong> of <span class="math inline">\(\theta\)</span> depends only on <span class="math inline">\(\hat{\theta}\)</span> and does not require any
+knowledge of <span class="math inline">\(\theta\)</span>. It estimates
+the standard deviation of <span class="math inline">\(\hat{\theta}\)</span> over the <span class="math inline">\(n_{\text{sim}}\)</span> replications:</p>
+<p><span class="math display">\[\text{Empirical SE} =
+\sqrt{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}}
+(\hat{\theta}_i - \bar{\theta}) ^ 2}\]</span></p>
 <p>The Monte Carlo standard error is calculated as:</p>
-<p><span class="math display">\[\text{MCSE(Emp. SE)} = \frac{\widehat{\text{Emp. SE}}}{\sqrt{2 (n_{\text{sim}} - 1)}}\]</span></p>
-<p>When comparing different methods, the <strong>relative precision of a given method B against a reference method A</strong> is computed as:</p>
-<p><span class="math display">\[\text{Relative % increase in precision} = 100 \left[ \left( \frac{\widehat{\text{Emp. SE}}_A}{\widehat{\text{Emp. SE}}_B} \right) ^ 2 - 1 \right]\]</span></p>
+<p><span class="math display">\[\text{MCSE(Emp. SE)} =
+\frac{\widehat{\text{Emp. SE}}}{\sqrt{2 (n_{\text{sim}} -
+1)}}\]</span></p>
+<p>When comparing different methods, the <strong>relative precision of a
+given method B against a reference method A</strong> is computed as:</p>
+<p><span class="math display">\[\text{Relative % increase in precision}
+= 100 \left[ \left( \frac{\widehat{\text{Emp.
+SE}}_A}{\widehat{\text{Emp. SE}}_B} \right) ^ 2 - 1 \right]\]</span></p>
 <p>Its (approximated) Monte Carlo standard error is:</p>
-<p><span class="math display">\[\text{MCSE(Relative % increase in precision)} \simeq 200 \left( \frac{\widehat{\text{Emp. SE}}_A}{\widehat{\text{Emp. SE}}_B} \right)^2 \sqrt{\frac{1 - \rho^2_{AB}}{n_{\text{sim}} - 1}}\]</span></p>
-<p><span class="math inline">\(\rho^2_{AB}\)</span> is the correlation of <span class="math inline">\(\hat{\theta}_A\)</span> and <span class="math inline">\(\hat{\theta}_B\)</span>.</p>
-<p>A measure that takes into account both precision and accuracy of a method is the <strong>mean squared error</strong>, which is the sum of the squared bias and variance of <span class="math inline">\(\hat{\theta}\)</span>:</p>
-<p><span class="math display">\[\text{MSE} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \theta) ^ 2\]</span></p>
+<p><span class="math display">\[\text{MCSE(Relative % increase in
+precision)} \simeq 200 \left( \frac{\widehat{\text{Emp.
+SE}}_A}{\widehat{\text{Emp. SE}}_B} \right)^2 \sqrt{\frac{1 -
+\rho^2_{AB}}{n_{\text{sim}} - 1}}\]</span></p>
+<p><span class="math inline">\(\rho^2_{AB}\)</span> is the correlation
+of <span class="math inline">\(\hat{\theta}_A\)</span> and <span class="math inline">\(\hat{\theta}_B\)</span>.</p>
+<p>A measure that takes into account both precision and accuracy of a
+method is the <strong>mean squared error</strong>, which is the sum of
+the squared bias and variance of <span class="math inline">\(\hat{\theta}\)</span>:</p>
+<p><span class="math display">\[\text{MSE} = \frac{1}{n_{\text{sim}}}
+\sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \theta) ^
+2\]</span></p>
 <p>The Monte Carlo standard error is:</p>
-<p><span class="math display">\[\text{MCSE(MSE)} = \sqrt{\frac{\sum_{i = 1} ^ {n_{\text{sim}}} \left[ (\hat{\theta}_i - \theta) ^2 - \text{MSE} \right] ^ 2}{n_{\text{sim}} (n_{\text{sim}} - 1)}}\]</span></p>
-<p>The <strong>model based standard error</strong> is computed by averaging the estimated standard errors for each replication:</p>
-<p><span class="math display">\[\text{Model SE} = \sqrt{\frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} \widehat{\text{Var}}(\hat{\theta}_i)}\]</span></p>
+<p><span class="math display">\[\text{MCSE(MSE)} = \sqrt{\frac{\sum_{i =
+1} ^ {n_{\text{sim}}} \left[ (\hat{\theta}_i - \theta) ^2 - \text{MSE}
+\right] ^ 2}{n_{\text{sim}} (n_{\text{sim}} - 1)}}\]</span></p>
+<p>The <strong>model based standard error</strong> is computed by
+averaging the estimated standard errors for each replication:</p>
+<p><span class="math display">\[\text{Model SE} =
+\sqrt{\frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}}
+\widehat{\text{Var}}(\hat{\theta}_i)}\]</span></p>
 <p>Its (approximated) Monte Carlo standard error is computed as:</p>
-<p><span class="math display">\[\text{MCSE(Model SE)} \simeq \sqrt{\frac{\text{Var}[\widehat{\text{Var}}(\hat{\theta}_i)]}{4 n_{\text{sim}} \widehat{\text{Model SE}}}}\]</span></p>
-<p>The model standard error targets the empirical standard error. Hence, the <strong>relative error in the model standard error</strong> is an informative performance measure:</p>
-<p><span class="math display">\[\text{Relative % error in model SE} = 100 \left( \frac{\text{Model SE}}{\text{Empirical SE}} - 1\right)\]</span></p>
+<p><span class="math display">\[\text{MCSE(Model SE)} \simeq
+\sqrt{\frac{\text{Var}[\widehat{\text{Var}}(\hat{\theta}_i)]}{4
+n_{\text{sim}} \widehat{\text{Model SE}}}}\]</span></p>
+<p>The model standard error targets the empirical standard error. Hence,
+the <strong>relative error in the model standard error</strong> is an
+informative performance measure:</p>
+<p><span class="math display">\[\text{Relative % error in model SE} =
+100 \left( \frac{\text{Model SE}}{\text{Empirical SE}} -
+1\right)\]</span></p>
 <p>Its Monte Carlo standard error is computed as:</p>
-<p><span class="math display">\[\text{MCSE(Relative % error in model SE)} = 100 \left( \frac{\text{Model SE}}{\text{Empirical SE}} \right) \sqrt{\frac{\text{Var}[\widehat{\text{Var}}(\hat{\theta}_i)]}{4 n_{\text{sim}} \widehat{\text{Model SE}} ^ 4} + \frac{1}{2(n_{\text{sim}} - 1)}}\]</span></p>
-<p><strong>Coverage</strong> is another key property of an estimator. It is defined as the probability that a confidence interval contains the true value <span class="math inline">\(\theta\)</span>, and computed as:</p>
-<p><span class="math display">\[\text{Coverage} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I(\hat{\theta}_{i, \text{low}} \le \theta \le \hat{\theta}_{i, \text{upp}})\]</span></p>
-<p>where <span class="math inline">\(I(\cdot)\)</span> is the indicator function. The Monte Carlo standard error is computed as:</p>
-<p><span class="math display">\[\text{MCSE(Coverage)} = \sqrt{\frac{\text{Coverage} \times (1 - \text{Coverage})}{n_{\text{sim}}}}\]</span></p>
+<p><span class="math display">\[\text{MCSE(Relative % error in model
+SE)} = 100 \left( \frac{\text{Model SE}}{\text{Empirical SE}} \right)
+\sqrt{\frac{\text{Var}[\widehat{\text{Var}}(\hat{\theta}_i)]}{4
+n_{\text{sim}} \widehat{\text{Model SE}} ^ 4} +
+\frac{1}{2(n_{\text{sim}} - 1)}}\]</span></p>
+<p><strong>Coverage</strong> is another key property of an estimator. It
+is defined as the probability that a confidence interval contains the
+true value <span class="math inline">\(\theta\)</span>, and computed
+as:</p>
+<p><span class="math display">\[\text{Coverage} =
+\frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}}
+I(\hat{\theta}_{i, \text{low}} \le \theta \le \hat{\theta}_{i,
+\text{upp}})\]</span></p>
+<p>where <span class="math inline">\(I(\cdot)\)</span> is the indicator
+function. The Monte Carlo standard error is computed as:</p>
+<p><span class="math display">\[\text{MCSE(Coverage)} =
+\sqrt{\frac{\text{Coverage} \times (1 -
+\text{Coverage})}{n_{\text{sim}}}}\]</span></p>
 <p>Under coverage is to be expected if:</p>
 <ol style="list-style-type: decimal">
 <li><span class="math inline">\(\text{Bias} \ne 0\)</span>, or</li>
-<li><span class="math inline">\(\text{Models SE} &lt; \text{Empirical SE}\)</span>, or</li>
-<li>the distribution of <span class="math inline">\(\hat{\theta}\)</span> is not normal and intervals have been constructed assuming normality, or</li>
-<li><span class="math inline">\(\widehat{\text{Var}}(\hat{\theta}_i)\)</span> is too variable</li>
+<li><span class="math inline">\(\text{Models SE} &lt; \text{Empirical
+SE}\)</span>, or</li>
+<li>the distribution of <span class="math inline">\(\hat{\theta}\)</span> is not normal and intervals
+have been constructed assuming normality, or</li>
+<li><span class="math inline">\(\widehat{\text{Var}}(\hat{\theta}_i)\)</span> is
+too variable</li>
 </ol>
-<p>Over coverage occurs as a result of <span class="math inline">\(\text{Models SE} &gt; \text{Empirical SE}\)</span>.</p>
-<p>As under coverage may be a result of bias, another useful summary statistic is <strong>bias-eliminated coverage</strong>:</p>
-<p><span class="math display">\[\text{Bias-eliminated coverage} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I(\hat{\theta}_{i, \text{low}} \le \bar{\theta} \le \hat{\theta}_{i, \text{upp}}) \]</span></p>
+<p>Over coverage occurs as a result of <span class="math inline">\(\text{Models SE} &gt; \text{Empirical
+SE}\)</span>.</p>
+<p>As under coverage may be a result of bias, another useful summary
+statistic is <strong>bias-eliminated coverage</strong>:</p>
+<p><span class="math display">\[\text{Bias-eliminated coverage} =
+\frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}}
+I(\hat{\theta}_{i, \text{low}} \le \bar{\theta} \le \hat{\theta}_{i,
+\text{upp}}) \]</span></p>
 <p>The Monte Carlo standard error is analogously as coverage:</p>
-<p><span class="math display">\[\text{MCSE(Bias-eliminated coverage)} = \sqrt{\frac{\text{Bias-eliminated coverage} \times (1 - \text{Bias-eliminated coverage})}{n_{\text{sim}}}}\]</span></p>
+<p><span class="math display">\[\text{MCSE(Bias-eliminated coverage)} =
+\sqrt{\frac{\text{Bias-eliminated coverage} \times (1 -
+\text{Bias-eliminated coverage})}{n_{\text{sim}}}}\]</span></p>
 <p>Finally, <strong>power</strong> of a significance test at the <span class="math inline">\(\alpha\)</span> level is defined as:</p>
-<p><span class="math display">\[\text{Power} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I \left[ |\hat{\theta}_i| \ge z_{\alpha/2} * \sqrt{\widehat{\text{Var}}(\hat{\theta_i})} \right]\]</span></p>
+<p><span class="math display">\[\text{Power} = \frac{1}{n_{\text{sim}}}
+\sum_{i = 1} ^ {n_{\text{sim}}} I \left[ |\hat{\theta}_i| \ge
+z_{\alpha/2} * \sqrt{\widehat{\text{Var}}(\hat{\theta_i})}
+\right]\]</span></p>
 <p>The Monte Carlo standard error is analogously as coverage:</p>
-<p><span class="math display">\[\text{MCSE(Power)} = \sqrt{\frac{\text{Power} \times (1 - \text{Power})}{n_{\text{sim}}}}\]</span></p>
-<p>Further information on summary statistics for simulation studies can be found in White (2010) and Morris, White, and Crowther (2019).</p>
+<p><span class="math display">\[\text{MCSE(Power)} =
+\sqrt{\frac{\text{Power} \times (1 -
+\text{Power})}{n_{\text{sim}}}}\]</span></p>
+<p>Further information on summary statistics for simulation studies can
+be found in White (2010) and Morris, White, and Crowther (2019).</p>
 </div>
 <div id="example-1-simulation-study-on-missing-data" class="section level1">
 <h1>Example 1: Simulation study on missing data</h1>
-<p>With this example dataset included in <code>rsimsum</code> we aim to summarise a simulation study comparing different ways to handle missing covariates when fitting a Cox model (White and Royston, 2009). One thousand datasets were simulated, each containing normally distributed covariates <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> and time-to-event outcome. Both covariates has <span class="math inline">\(20\%\)</span> of their values deleted independently of all other variables so the data became missing completely at random (Little and Rubin, 2002). Each simulated dataset was analysed in three ways. A Cox model was fit to the complete cases (<code>CC</code>). Then two methods of multiple imputation using chained equations (van Buuren, Boshuizen, and Knook, 1999) were used. The <code>MI_LOGT</code> method multiply imputes the missing values of <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> with the outcome included as <span class="math inline">\(\log(t)\)</span> and <span class="math inline">\(d\)</span>, where <span class="math inline">\(t\)</span> is the survival time and <span class="math inline">\(d\)</span> is the event indicator. The <code>MI_T</code> method is the same except that <span class="math inline">\(\log(t)\)</span> is replaced by <span class="math inline">\(t\)</span> in the imputation model.</p>
+<p>With this example dataset included in <code>rsimsum</code> we aim to
+summarise a simulation study comparing different ways to handle missing
+covariates when fitting a Cox model (White and Royston, 2009). One
+thousand datasets were simulated, each containing normally distributed
+covariates <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> and time-to-event outcome. Both
+covariates has <span class="math inline">\(20\%\)</span> of their values
+deleted independently of all other variables so the data became missing
+completely at random (Little and Rubin, 2002). Each simulated dataset
+was analysed in three ways. A Cox model was fit to the complete cases
+(<code>CC</code>). Then two methods of multiple imputation using chained
+equations (van Buuren, Boshuizen, and Knook, 1999) were used. The
+<code>MI_LOGT</code> method multiply imputes the missing values of <span class="math inline">\(x\)</span> and <span class="math inline">\(z\)</span> with the outcome included as <span class="math inline">\(\log(t)\)</span> and <span class="math inline">\(d\)</span>, where <span class="math inline">\(t\)</span> is the survival time and <span class="math inline">\(d\)</span> is the event indicator. The
+<code>MI_T</code> method is the same except that <span class="math inline">\(\log(t)\)</span> is replaced by <span class="math inline">\(t\)</span> in the imputation model.</p>
 <p>We load the data in the usual way:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rsimsum)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;MIsim&quot;</span>, <span class="at">package =</span> <span class="st">&quot;rsimsum&quot;</span>)</span></code></pre></div>
@@ -435,16 +525,27 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ se     : num [1:3000] 0.147 0.126 0.141 0.16 0.141 ...</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  - attr(*, &quot;label&quot;)= chr &quot;simsum example: data from a simulation study comparing 3 ways to handle missing&quot;</span></span></code></pre></div>
 <ul>
-<li><p><code>dataset</code>, the number of the simulated dataset;</p></li>
-<li><p><code>method</code>, the method used (<code>CC</code>, <code>MI_LOGT</code> or <code>MI_T</code>);</p></li>
+<li><p><code>dataset</code>, the number of the simulated
+dataset;</p></li>
+<li><p><code>method</code>, the method used (<code>CC</code>,
+<code>MI_LOGT</code> or <code>MI_T</code>);</p></li>
 <li><p><code>b</code>, the point estimate;</p></li>
-<li><p><code>se</code>, the standard error of the point estimate.</p></li>
+<li><p><code>se</code>, the standard error of the point
+estimate.</p></li>
 </ul>
-<p>We summarise the results of the simulation study by method using the <code>simsum</code> function:</p>
+<p>We summarise the results of the simulation study by method using the
+<code>simsum</code> function:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>s1 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> MIsim, <span class="at">estvarname =</span> <span class="st">&quot;b&quot;</span>, <span class="at">true =</span> <span class="fl">0.50</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="at">ref =</span> <span class="st">&quot;CC&quot;</span>)</span></code></pre></div>
-<p>We set <code>true = 0.50</code> as the true value of the point estimate <code>b</code> - under which the data was simulated - is 0.50. We select <code>CC</code> as the reference method as we consider the complete cases analysis the reference method to benchmark against; if we do not set a reference method, <code>simsum</code> picks one automatically.</p>
-<p>Using the default settings, Monte Carlo standard errors are computed and returned.</p>
-<p>Summarising a <code>simsum</code> object, we obtain the following output:</p>
+<p>We set <code>true = 0.50</code> as the true value of the point
+estimate <code>b</code> - under which the data was simulated - is 0.50.
+We select <code>CC</code> as the reference method as we consider the
+complete cases analysis the reference method to benchmark against; if we
+do not set a reference method, <code>simsum</code> picks one
+automatically.</p>
+<p>Using the default settings, Monte Carlo standard errors are computed
+and returned.</p>
+<p>Summarising a <code>simsum</code> object, we obtain the following
+output:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ss1 <span class="ot">&lt;-</span> <span class="fu">summary</span>(s1)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ss1</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Values are:</span></span>
@@ -505,7 +606,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Power of 5% level test:</span></span>
 <span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               CC         MI_LOGT            MI_T</span></span>
 <span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.9460 (0.0071) 0.9690 (0.0055) 0.9630 (0.0060)</span></span></code></pre></div>
-<p>The output begins with a brief overview of the setting of the simulation study (e.g. the method variable, unique methods, etc.), and continues with each summary statistic by method (if defined, as in this case). The values that are reported are point estimates with Monte Carlo standard errors in brackets; however, it is also possible to require confidence intervals based on Monte Carlo standard errors to be reported instead:</p>
+<p>The output begins with a brief overview of the setting of the
+simulation study (e.g. the method variable, unique methods, etc.), and
+continues with each summary statistic by method (if defined, as in this
+case). The values that are reported are point estimates with Monte Carlo
+standard errors in brackets; however, it is also possible to require
+confidence intervals based on Monte Carlo standard errors to be reported
+instead:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ss1, <span class="at">mcse =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Values are:</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Point Estimate (95% Confidence Interval based on Monte Carlo Standard Errors)</span></span>
@@ -565,17 +672,29 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Power of 5% level test:</span></span>
 <span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       CC                 MI_LOGT                    MI_T</span></span>
 <span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.9460 (0.9320, 0.9600) 0.9690 (0.9583, 0.9797) 0.9630 (0.9513, 0.9747)</span></span></code></pre></div>
-<p>Highlighting some points of interest from the summary results above:</p>
+<p>Highlighting some points of interest from the summary results
+above:</p>
 <ol style="list-style-type: decimal">
-<li>The <code>CC</code> method has small-sample bias away from the null (point estimate 0.0168, with 95% confidence interval: 0.0074 - 0.0261);</li>
-<li><code>CC</code> is inefficient compared with <code>MI_LOGT</code> and <code>MI_T</code>: the relative gain in precision for these two methods is 1.3105% and 1.2637% compared to <code>CC</code>, respectively;</li>
-<li>Model-based standard errors are close to empirical standard errors;</li>
-<li>Coverage of nominal 95% confidence intervals also seems fine, which is not surprising in view of the generally low (or lack of) bias and good model-based standard errors;</li>
-<li><code>CC</code> has lower power compared with <code>MI_LOGT</code> and <code>MI_T</code>, which is not surprising in view of its inefficiency.</li>
+<li>The <code>CC</code> method has small-sample bias away from the null
+(point estimate 0.0168, with 95% confidence interval: 0.0074 -
+0.0261);</li>
+<li><code>CC</code> is inefficient compared with <code>MI_LOGT</code>
+and <code>MI_T</code>: the relative gain in precision for these two
+methods is 1.3105% and 1.2637% compared to <code>CC</code>,
+respectively;</li>
+<li>Model-based standard errors are close to empirical standard
+errors;</li>
+<li>Coverage of nominal 95% confidence intervals also seems fine, which
+is not surprising in view of the generally low (or lack of) bias and
+good model-based standard errors;</li>
+<li><code>CC</code> has lower power compared with <code>MI_LOGT</code>
+and <code>MI_T</code>, which is not surprising in view of its
+inefficiency.</li>
 </ol>
 <div id="tabulating-summary-statistics" class="section level2">
 <h2>Tabulating summary statistics</h2>
-<p>It is straightforward to produce a table of summary statistics for use in an R Markdown document:</p>
+<p>It is straightforward to produce a table of summary statistics for
+use in an R Markdown document:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Attaching package: &#39;knitr&#39;</span></span>
@@ -933,13 +1052,18 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </tr>
 </tbody>
 </table>
-<p>Using <code>tidy()</code> in combination with R packages such as <a href="https://cran.r-project.org/package=xtable">xtable</a>, <a href="https://cran.r-project.org/package=kableExtra">kableExtra</a>, <a href="https://cran.r-project.org/package=tables">tables</a> can yield a variety of tables that should suit most purposes.</p>
-<p>More information on producing tables directly from R can be found in the <a href="https://CRAN.R-project.org/view=ReproducibleResearch">CRAN Task View on Reproducible Research</a>.</p>
+<p>Using <code>tidy()</code> in combination with R packages such as <a href="https://cran.r-project.org/package=xtable">xtable</a>, <a href="https://cran.r-project.org/package=kableExtra">kableExtra</a>, <a href="https://cran.r-project.org/package=tables">tables</a> can yield a
+variety of tables that should suit most purposes.</p>
+<p>More information on producing tables directly from R can be found in
+the <a href="https://CRAN.R-project.org/view=ReproducibleResearch">CRAN
+Task View on Reproducible Research</a>.</p>
 </div>
 <div id="plotting-summary-statistics" class="section level2">
 <h2>Plotting summary statistics</h2>
-<p>In this section, we show how to plot and compare summary statistics using the popular R package <a href="https://CRAN.R-project.org/package=ggplot2">ggplot</a>.</p>
-<p>Plotting bias by method with <span class="math inline">\(95\%\)</span> confidence intervals based on Monte Carlo standard errors:</p>
+<p>In this section, we show how to plot and compare summary statistics
+using the popular R package <a href="https://CRAN.R-project.org/package=ggplot2">ggplot</a>.</p>
+<p>Plotting bias by method with <span class="math inline">\(95\%\)</span> confidence intervals based on Monte
+Carlo standard errors:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">tidy</span>(ss1, <span class="at">stats =</span> <span class="st">&quot;bias&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> method, <span class="at">y =</span> est, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper)) <span class="sc">+</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
@@ -948,7 +1072,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Method&quot;</span>, <span class="at">y =</span> <span class="st">&quot;Bias&quot;</span>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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" width="75%" style="display: block; margin: auto;" /></p>
-<p>Conversely, say we want to visually compare coverage for the three methods compared with this simulation study:</p>
+<p>Conversely, say we want to visually compare coverage for the three
+methods compared with this simulation study:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">tidy</span>(ss1, <span class="at">stats =</span> <span class="st">&quot;cover&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> method, <span class="at">y =</span> est, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper)) <span class="sc">+</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.95</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
@@ -960,11 +1085,27 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="dropping-large-estimates-and-standard-errors" class="section level2">
 <h2>Dropping large estimates and standard errors</h2>
-<p><code>rsimsum</code> allows to automatically drop estimates and standard errors that are larger than a predefined value. Specifically, the argument of <code>simsum</code> that control this behaviour is <code>dropbig</code>, with tuning parameters <code>dropbig.max</code> and <code>dropbig.semax</code> that can be passed via the <code>control</code> argument.</p>
-<p>Set <code>dropbig</code> to <code>TRUE</code> and standardised estimates larger than <code>max</code> in absolute value will be dropped; standard errors larger than <code>semax</code> times the average standard error will be dropped too. By default, robust standardisation is used (based on median and inter-quartile range); however, it is also possible to request regular standardisation (based on mean and standard deviation) by setting the control parameter <code>dropbig.robust = FALSE</code>.</p>
-<p>For instance, say we want to drop standardised estimates larger than <span class="math inline">\(3\)</span> in absolute value and standard errors larger than <span class="math inline">\(1.5\)</span> times the average standard error:</p>
+<p><code>rsimsum</code> allows to automatically drop estimates and
+standard errors that are larger than a predefined value. Specifically,
+the argument of <code>simsum</code> that control this behaviour is
+<code>dropbig</code>, with tuning parameters <code>dropbig.max</code>
+and <code>dropbig.semax</code> that can be passed via the
+<code>control</code> argument.</p>
+<p>Set <code>dropbig</code> to <code>TRUE</code> and standardised
+estimates larger than <code>max</code> in absolute value will be
+dropped; standard errors larger than <code>semax</code> times the
+average standard error will be dropped too. By default, robust
+standardisation is used (based on median and inter-quartile range);
+however, it is also possible to request regular standardisation (based
+on mean and standard deviation) by setting the control parameter
+<code>dropbig.robust = FALSE</code>.</p>
+<p>For instance, say we want to drop standardised estimates larger than
+<span class="math inline">\(3\)</span> in absolute value and standard
+errors larger than <span class="math inline">\(1.5\)</span> times the
+average standard error:</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>s1<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> MIsim, <span class="at">estvarname =</span> <span class="st">&quot;b&quot;</span>, <span class="at">true =</span> <span class="fl">0.50</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">methodvar =</span> <span class="st">&quot;method&quot;</span>, <span class="at">ref =</span> <span class="st">&quot;CC&quot;</span>, <span class="at">dropbig =</span> <span class="cn">TRUE</span>, <span class="at">control =</span> <span class="fu">list</span>(<span class="at">dropbig.max =</span> <span class="dv">4</span>, <span class="at">dropbig.semax =</span> <span class="fl">1.5</span>))</span></code></pre></div>
-<p>Some estimates were dropped, as we can see from the number of non-missing point estimates, standard errors:</p>
+<p>Some estimates were dropped, as we can see from the number of
+non-missing point estimates, standard errors:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(s1<span class="fl">.2</span>, <span class="at">stats =</span> <span class="st">&quot;nsim&quot;</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Values are:</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Point Estimate (Monte Carlo Standard Error)</span></span>
@@ -972,7 +1113,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Non-missing point estimates/standard errors:</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   CC MI_LOGT MI_T</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  958     951  944</span></span></code></pre></div>
-<p>Everything else works analogously as before; for instance, to summarise the results:</p>
+<p>Everything else works analogously as before; for instance, to
+summarise the results:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(s1<span class="fl">.2</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Values are:</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Point Estimate (Monte Carlo Standard Error)</span></span>
@@ -1062,13 +1204,21 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <ul>
 <li><p><code>dataset</code>, simulated dataset number;</p></li>
 <li><p><code>n</code>, sample size of the simulate dataset;</p></li>
-<li><p><code>baseline</code>, baseline hazard function of the simulated dataset;</p></li>
-<li><p><code>model</code>, method used (Cox model or Royston-Parmar model with 2 degrees of freedom);</p></li>
-<li><p><code>theta</code>, point estimate for the log-hazard ratio;</p></li>
+<li><p><code>baseline</code>, baseline hazard function of the simulated
+dataset;</p></li>
+<li><p><code>model</code>, method used (Cox model or Royston-Parmar
+model with 2 degrees of freedom);</p></li>
+<li><p><code>theta</code>, point estimate for the log-hazard
+ratio;</p></li>
 <li><p><code>se</code>, standard error of the point estimate.</p></li>
 </ul>
-<p><code>rsimsum</code> can summarise results from simulation studies with several data-generating mechanisms. For instance, with this example we show how to compute summary statistics by baseline hazard function and sample size.</p>
-<p>In order to summarise results by data-generating factors, it is sufficient to define the “by” factors in the call to <code>simsum</code>:</p>
+<p><code>rsimsum</code> can summarise results from simulation studies
+with several data-generating mechanisms. For instance, with this example
+we show how to compute summary statistics by baseline hazard function
+and sample size.</p>
+<p>In order to summarise results by data-generating factors, it is
+sufficient to define the “by” factors in the call to
+<code>simsum</code>:</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>s2 <span class="ot">&lt;-</span> <span class="fu">simsum</span>(<span class="at">data =</span> relhaz, <span class="at">estvarname =</span> <span class="st">&quot;theta&quot;</span>, <span class="at">true =</span> <span class="sc">-</span><span class="fl">0.50</span>, <span class="at">se =</span> <span class="st">&quot;se&quot;</span>, <span class="at">methodvar =</span> <span class="st">&quot;model&quot;</span>, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;baseline&quot;</span>, <span class="st">&quot;n&quot;</span>))</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &#39;ref&#39; method was not specified, Cox set as the reference</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>s2</span>
@@ -1082,8 +1232,14 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; By factors: baseline, n </span></span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Monte Carlo standard errors were computed.</span></span></code></pre></div>
-<p>The difference between <code>methodvar</code> and <code>by</code> is as follows: <code>methodvar</code> represents methods (e.g. the two models, in this example) compared with this simulation study, while <code>by</code> represents all possible data-generating factors that varied when simulating data (in this case, sample size and the true baseline hazard function).</p>
-<p>Summarising the results will be printed out for each method and combination of data-generating factors:</p>
+<p>The difference between <code>methodvar</code> and <code>by</code> is
+as follows: <code>methodvar</code> represents methods (e.g. the two
+models, in this example) compared with this simulation study, while
+<code>by</code> represents all possible data-generating factors that
+varied when simulating data (in this case, sample size and the true
+baseline hazard function).</p>
+<p>Summarising the results will be printed out for each method and
+combination of data-generating factors:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ss2 <span class="ot">&lt;-</span> <span class="fu">summary</span>(s2)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ss2</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Values are:</span></span>
@@ -1188,8 +1344,11 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      Weibull 250 0.9700 (0.0171) 0.8600 (0.0347) 0.9700 (0.0171)</span></span></code></pre></div>
 <div id="plotting-summary-statistics-1" class="section level2">
 <h2>Plotting summary statistics</h2>
-<p>Tables could get cumbersome when there are many different data-generating mechanisms. Plots are generally easier to interpret, and can be generated as easily as before.</p>
-<p>Say we want to compare bias for each method by baseline hazard function and sample size using faceting:</p>
+<p>Tables could get cumbersome when there are many different
+data-generating mechanisms. Plots are generally easier to interpret, and
+can be generated as easily as before.</p>
+<p>Say we want to compare bias for each method by baseline hazard
+function and sample size using faceting:</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">tidy</span>(ss2, <span class="at">stats =</span> <span class="st">&quot;bias&quot;</span>), <span class="fu">aes</span>(<span class="at">x =</span> model, <span class="at">y =</span> est, <span class="at">ymin =</span> lower, <span class="at">ymax =</span> upper)) <span class="sc">+</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">lty =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
@@ -1203,11 +1362,20 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="references" class="section level1">
 <h1>References</h1>
 <ul>
-<li>White, I.R. 2010. <em>simsum: Analyses of simulation studies including Monte Carlo error</em>. The Stata Journal 10(3): 369-385 &lt;<a href="https://www.stata-journal.com/article.html?article=st0200">https://www.stata-journal.com/article.html?article=st0200</a>&gt;</li>
-<li>Morris, T.P., White, I.R. and Crowther, M.J. 2019. <em>Using simulation studies to evaluate statistical methods</em>. Statistics in Medicine, &lt;<a href="https://doi.org/10.1002/sim.8086">doi:10.1002/sim.8086</a>&gt;</li>
-<li>White, I.R., and P. Royston. 2009. <em>Imputing missing covariate values for the Cox model</em>. Statistics in Medicine 28(15):1982-1998 &lt;<a href="https://doi.org/10.1002/sim.3618">doi:10.1002/sim.3618</a>&gt;</li>
-<li>Little, R.J.A., and D.B. Rubin. 2002. <em>Statistical analysis with missing data</em>. 2nd ed. Hoboken, NJ: Wiley &lt;<a href="https://onlinelibrary.wiley.com/doi/book/10.1002/9781119013563">doi:10.1002/9781119013563</a>&gt;</li>
-<li>van Buuren, S., H.C. Boshuizen, and D.L. Knook. 1999. <em>Multiple imputation of missing blood pressure covariates in survival analysis</em>. Statistics in Medicine 18(6):681-694 &lt;<a href="https://doi.org/10.1002/(SICI)1097-0258(19990330)18:6%3C681::AID-SIM71%3E3.0.CO;2-R">doi:10.1002/(SICI)1097-0258(19990330)18:6&lt;681::AID-SIM71&gt;3.0.CO;2-R</a>&gt;</li>
+<li>White, I.R. 2010. <em>simsum: Analyses of simulation studies
+including Monte Carlo error</em>. The Stata Journal 10(3): 369-385
+&lt;<a href="https://www.stata-journal.com/article.html?article=st0200">https://www.stata-journal.com/article.html?article=st0200</a>&gt;</li>
+<li>Morris, T.P., White, I.R. and Crowther, M.J. 2019. <em>Using
+simulation studies to evaluate statistical methods</em>. Statistics in
+Medicine, &lt;<a href="https://doi.org/10.1002/sim.8086">doi:10.1002/sim.8086</a>&gt;</li>
+<li>White, I.R., and P. Royston. 2009. <em>Imputing missing covariate
+values for the Cox model</em>. Statistics in Medicine 28(15):1982-1998
+&lt;<a href="https://doi.org/10.1002/sim.3618">doi:10.1002/sim.3618</a>&gt;</li>
+<li>Little, R.J.A., and D.B. Rubin. 2002. <em>Statistical analysis with
+missing data</em>. 2nd ed. Hoboken, NJ: Wiley &lt;<a href="https://onlinelibrary.wiley.com/doi/book/10.1002/9781119013563">doi:10.1002/9781119013563</a>&gt;</li>
+<li>van Buuren, S., H.C. Boshuizen, and D.L. Knook. 1999. <em>Multiple
+imputation of missing blood pressure covariates in survival
+analysis</em>. Statistics in Medicine 18(6):681-694 &lt;<a href="https://doi.org/10.1002/(SICI)1097-0258(19990330)18:6%3C681::AID-SIM71%3E3.0.CO;2-R">doi:10.1002/(SICI)1097-0258(19990330)18:6&lt;681::AID-SIM71&gt;3.0.CO;2-R</a>&gt;</li>
 </ul>
 </div>
 
