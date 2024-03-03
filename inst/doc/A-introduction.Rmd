@@ -7,7 +7,7 @@ vignette: >
   %\VignetteIndexEntry{Introduction to rsimsum}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -16,18 +16,23 @@ options(width = 150)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.align = "center", fig.height = 6, fig.width = 6,
-  out.width = "75%"
+  fig.align = "center",
+  fig.height = 6,
+  fig.width = 6,
+  out.width = "80%"
 )
 ```
 
 # rsimsum
 
-`rsimsum` is an R package that can compute summary statistics from simulation studies. It is a port to R of the user-written command `simsum` in Stata (White I.R., 2010).
+`rsimsum` is an R package that can compute summary statistics from simulation studies.
+It is inspired by the user-written command `simsum` in Stata (White I.R., 2010).
 
-The aim of `rsimsum` is helping reporting of simulation studies, including understanding the role of chance in results of simulation studies. Specifically, `rsimsum` can compute Monte Carlo standard errors of summary statistics, defined as the standard deviation of the estimated summary statistic.
+The aim of `rsimsum` is helping reporting of simulation studies, including understanding the role of chance in results of simulation studies.
+Specifically, `rsimsum` can compute Monte Carlo standard errors of summary statistics, defined as the standard deviation of the estimated summary statistic; these are reported by default.
 
 Formula for summary statistics and Monte Carlo standard errors are presented in the next section.
+Note that the terms _summary statistic_ and _performance measure_ are used interchangeably.
 
 # Notation
 
@@ -41,9 +46,9 @@ We will use th following notation throughout this vignette:
 * $\text{Var}(\hat{\theta})$: the empirical variance of $\hat{\theta}$
 * $\alpha$: the nominal significance level
 
-# Summary statistics
+# Performance measures
 
-The first summary statistic of interest is **bias**, which quantifies whether the estimator targets the true value $\theta$ on average. Bias is calculated as:
+The first performance measure of interest is **bias**, which quantifies whether the estimator targets the true value $\theta$ on average. Bias is calculated as:
 
 $$\text{Bias} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} \hat{\theta}_i - \theta$$
 
@@ -51,7 +56,19 @@ The Monte Carlo standard error of bias is calculated as:
 
 $$\text{MCSE(Bias)} = \sqrt{\frac{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \bar{\theta}) ^ 2}{n_{\text{sim}}}}$$
 
-The **empirical standard error** of $\theta$ depends only on $\hat{\theta}$ and does not require any knowledge of $\theta$. It estimates the standard deviation of $\hat{\theta}$ over the $n_{\text{sim}}$ replications:
+`rsimsum` can also compute **relative bias** (_relative_ to the true value $\theta$), which can be interpreted similarly as with bias, but in relative terms rather than absolute.
+This is calculated as:
+
+$$\text{Relative Bias} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} \frac{\hat{\theta}_i - \theta}{\theta}$$
+
+Its Monte Carlo standard error is calculated as:
+
+$$
+\text{MCSE(Relative Bias)} =  \sqrt{\frac{1}{n_{\text{sim}} (n_{\text{sim}} - 1)} \sum_i^{n_{\text{sim} \left[ \frac{\hat{\theta}_i - \theta}{\theta} - \widehat{\text{Relative Bias}} \right]^2}
+$$
+
+The **empirical standard error** of $\theta$ depends only on $\hat{\theta}$ and does not require any knowledge of $\theta$.
+It estimates the standard deviation of $\hat{\theta}$ over the $n_{\text{sim}}$ replications:
 
 $$\text{Empirical SE} = \sqrt{\frac{1}{n_{\text{sim}} - 1} \sum_{i = 1} ^ {n_{\text{sim}}} (\hat{\theta}_i - \bar{\theta}) ^ 2}$$
 
@@ -121,7 +138,7 @@ $$\text{MCSE(Bias-eliminated coverage)} = \sqrt{\frac{\text{Bias-eliminated cove
 
 Finally, **power** of a significance test at the $\alpha$ level is defined as:
 
-$$\text{Power} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I \left[ |\hat{\theta}_i| \ge z_{\alpha/2} * \sqrt{\widehat{\text{Var}}(\hat{\theta_i})} \right]$$
+$$\text{Power} = \frac{1}{n_{\text{sim}}} \sum_{i = 1} ^ {n_{\text{sim}}} I \left[ |\hat{\theta}_i| \ge z_{\alpha/2} \times \sqrt{\widehat{\text{Var}}(\hat{\theta_i})} \right]$$
 
 The Monte Carlo standard error is analogously as coverage:
 
@@ -168,7 +185,7 @@ s1 <- simsum(data = MIsim, estvarname = "b", true = 0.50, se = "se", methodvar =
 
 We set `true = 0.50` as the true value of the point estimate `b` - under which the data was simulated - is 0.50. We select `CC` as the reference method as we consider the complete cases analysis the reference method to benchmark against; if we do not set a reference method, `simsum` picks one automatically.
 
-Using the default settings, Monte Carlo standard errors are computed and returned. 
+Using the default settings, Monte Carlo standard errors are computed and returned.
 
 Summarising a `simsum` object, we obtain the following output:
 
@@ -325,9 +342,8 @@ ggplot(tidy(ss2, stats = "bias"), aes(x = model, y = est, ymin = lower, ymax = u
 
 # References
 
-* White, I.R. 2010. _simsum: Analyses of simulation studies including Monte Carlo error_. The Stata Journal 10(3): 369-385 <[https://www.stata-journal.com/article.html?article=st0200](https://www.stata-journal.com/article.html?article=st0200)>
-* Morris, T.P., White, I.R. and Crowther, M.J. 2019. _Using simulation studies to evaluate statistical methods_. Statistics in Medicine, <[doi:10.1002/sim.8086](https://doi.org/10.1002/sim.8086)>
-* White, I.R., and P. Royston. 2009. _Imputing missing covariate values for the Cox model_. Statistics in Medicine 28(15):1982-1998 <[doi:10.1002/sim.3618](https://doi.org/10.1002/sim.3618)>
-* Little, R.J.A., and D.B. Rubin. 2002. _Statistical analysis with missing data_. 2nd ed. Hoboken, NJ: Wiley <[doi:10.1002/9781119013563](https://onlinelibrary.wiley.com/doi/book/10.1002/9781119013563)>
-* van Buuren, S., H.C. Boshuizen, and D.L. Knook. 1999. _Multiple imputation of missing blood pressure covariates in survival analysis_. Statistics in Medicine 18(6):681-694 <[doi:10.1002/(SICI)1097-0258(19990330)18:6<681::AID-SIM71>3.0.CO;2-R](https://doi.org/10.1002/(SICI)1097-0258(19990330)18:6<681::AID-SIM71>3.0.CO;2-R)>
-
+* White, I.R. 2010. _simsum: Analyses of simulation studies including Monte Carlo error_. The Stata Journal 10(3): 369-385
+* Morris, T.P., White, I.R. and Crowther, M.J. 2019. _Using simulation studies to evaluate statistical methods_. Statistics in Medicine 38:2074-2102
+* White, I.R., and P. Royston. 2009. _Imputing missing covariate values for the Cox model_. Statistics in Medicine 28(15):1982-1998
+* Little, R.J.A., and D.B. Rubin. 2002. _Statistical analysis with missing data_. 2nd ed. Hoboken, NJ: Wiley
+* van Buuren, S., H.C. Boshuizen, and D.L. Knook. 1999. _Multiple imputation of missing blood pressure covariates in survival analysis_. Statistics in Medicine 18(6):681-694 

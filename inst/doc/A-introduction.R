@@ -3,8 +3,10 @@ options(width = 150)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.align = "center", fig.height = 6, fig.width = 6,
-  out.width = "75%"
+  fig.align = "center",
+  fig.height = 6,
+  fig.width = 6,
+  out.width = "80%"
 )
 
 ## ----ex1-load-data----------------------------------------------------------------------------------------------------------------------------------

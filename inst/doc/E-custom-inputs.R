@@ -16,7 +16,7 @@ head(tt)
 t.test(extra ~ group, data = sleep)
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
-s1 <- simsum(data = tt, estvarname = "diff", true = -1, se = "se", ci.limits = c("lower", "upper"), methodvar = "method", by = "dgm")
+s1 <- simsum(data = tt, estvarname = "diff", true = -1, se = "se", ci.limits = c("conf.low", "conf.high"), methodvar = "method", by = "dgm")
 summary(s1, stats = "cover")
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ all.equal(tidy(s1), tidy(s4))
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
 tt$true <- -1
-s5 <- simsum(data = tt, estvarname = "diff", true = "true", se = "se", ci.limits = c("lower", "upper"), methodvar = "method", by = "dgm")
+s5 <- simsum(data = tt, estvarname = "diff", true = "true", se = "se", ci.limits = c("conf.low", "conf.high"), methodvar = "method", by = "dgm")
 summary(s5, stats = "cover")
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -85,15 +85,15 @@ summary(ms2, stats = "bias")
 identical(tidy(ms1), tidy(ms2))
 
 ## ---------------------------------------------------------------------------------------------------------------------------------------------------
-frailty$lower <- frailty$b - qt(1 - 0.05 / 2, df = 10) * frailty$se
-frailty$upper <- frailty$b + qt(1 - 0.05 / 2, df = 10) * frailty$se
+frailty$conf.low <- frailty$b - qt(1 - 0.05 / 2, df = 10) * frailty$se
+frailty$conf.high <- frailty$b + qt(1 - 0.05 / 2, df = 10) * frailty$se
 
 ms3 <- multisimsum(
   data = frailty,
   par = "par", true = "true",
   estvarname = "b", se = "se", methodvar = "model",
   by = "fv_dist",
-  ci.limits = c("lower", "upper")
+  ci.limits = c("conf.low", "conf.high")
 )
 summary(ms3, stats = "cover")
 

@@ -76,7 +76,7 @@
 
 ### Zip plot
 #' @keywords internal
-.zip_plot <- function(data, estvarname, se, true, methodvar, by, ci.limits, df, control, summ, zoom) {
+.zip_plot <- function(data, estvarname, se, true, methodvar, by, ci.limits, df, control, summ, zoom, zip_ci_colours) {
   ### Extract overall coverage
   summ <- summ[summ$stat == "cover", ]
   summ$cover <- summ$est
@@ -138,12 +138,34 @@
   ### Label of the y-axis
   ylab <- ifelse(is.null(df), "Fractional centile of |z-score|", "Fractional centile of |t-score|")
 
+  ### Define CI lines colors
+  if (length(zip_ci_colours) == 2) {
+    data$line_color_lower <- ifelse(data$cover_lower <= control$level & control$level <= data$cover_upper, zip_ci_colours[1], zip_ci_colours[2])
+    data$line_color_upper <- ifelse(data$cover_lower <= control$level & control$level <= data$cover_upper, zip_ci_colours[1], zip_ci_colours[2])
+  } else if (length(zip_ci_colours) == 3) {
+    data$line_color_lower <- ifelse(data$cover_lower > control$level & data$cover_upper > control$level, zip_ci_colours[3],
+      ifelse(data$cover_lower < control$level & data$cover_upper < control$level, zip_ci_colours[2],
+        ifelse(data$cover_lower <= control$level & control$level <= data$cover_upper, zip_ci_colours[1], NA)
+      )
+    )
+
+    data$line_color_upper <- ifelse(data$cover_lower > control$level & data$cover_upper > control$level, zip_ci_colours[3],
+      ifelse(data$cover_lower < control$level & data$cover_upper < control$level, zip_ci_colours[2],
+        ifelse(data$cover_lower <= control$level & control$level <= data$cover_upper, zip_ci_colours[1], NA)
+      )
+    )
+  } else {
+    data$line_color_lower <- zip_ci_colours
+    data$line_color_upper <- zip_ci_colours
+  }
+
   ### Build plot
   gg <- ggplot2::ggplot(data, ggplot2::aes(y = rank, x = lower, color = covering)) +
     ggplot2::geom_segment(ggplot2::aes(yend = rank, xend = upper)) +
-    ggplot2::geom_vline(xintercept = true, color = "yellow", linetype = "dashed") +
-    ggplot2::geom_hline(ggplot2::aes(yintercept = cover_lower), color = "yellow", linetype = "dashed") +
-    ggplot2::geom_hline(ggplot2::aes(yintercept = cover_upper), color = "yellow", linetype = "dashed") +
+    ggplot2::geom_vline(xintercept = true, color = "black", linetype = "dashed") +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = cover_lower), color = data$line_color_lower, linetype = "dashed", linewidth = 1) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = 0.95), color = "black", linetype = "dashed") +
+    ggplot2::geom_hline(ggplot2::aes(yintercept = cover_upper), color = data$line_color_upper, linetype = "dashed", linewidth = 1) +
     ggplot2::labs(y = ylab, x = paste0(100 * control$level, "% confidence intervals"), color = "") +
     theme(legend.position = "bottom")
 
@@ -291,6 +313,11 @@
   names(opts) <- by
   dgms <- do.call(expand.grid, opts)
   dgms[[".scenario"]] <- seq(nrow(dgms))
+  opts_methods <- lapply(X = methodvar, FUN = function(x) levels(data[[x]]))
+  names(opts_methods) <- methodvar
+  opts_methods[[".scenario"]] <- unique(dgms[[".scenario"]])
+  opts_methods <- do.call(expand.grid, opts_methods)
+  dgms <- merge(dgms, opts_methods)
   data <- merge(x = data, y = dgms)
   data <- data[order(data[[".scenario"]]), ]
 
@@ -314,15 +341,23 @@
     }
   }
 
+  ### Identify if simulation design is fully factorial
+  ff <- max(data[[".scenario"]]) == length(unique(data[[".scenario"]]))
+  num_ff <- length(unique(data[[".scenario"]]))
+
   ### Rescale variables included in the nested loop plot
   for (i in seq_along(by)) {
     data[[paste0(".", by[i])]] <- scales::rescale(x = as.numeric(data[[by[i]]]), to = placement[[i]])
   }
 
+  ### Add back scenarios, to obtain equivalent fully-factorial NLP
+  data <- merge(x = data, y = dgms, all = TRUE)
+  data[[".notmissing"]] <- !is.na(data[["est"]])
+
   ### Build basic plot
   if (!is.null(methodvar)) {
     methodvar <- rlang::sym(methodvar)
-    gg <- ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = .scenario, y = est, group = !!methodvar)) +
+    gg <- ggplot2::ggplot(data = data, mapping = ggplot2::aes(x = .scenario, y = est)) +
       ggplot2::geom_hline(yintercept = target, linetype = "dotted") +
       ggplot2::geom_step(mapping = ggplot2::aes(color = !!methodvar))
   } else {
@@ -330,8 +365,13 @@
       ggplot2::geom_hline(yintercept = target, linetype = "dotted") +
       ggplot2::geom_step()
   }
-  gg <- gg +
-    ggplot2::labs(x = paste0(paste(vapply(X = by, FUN = function(x) length(levels(data[[x]])), FUN.VALUE = numeric(1)), collapse = " x "), " = ", max(data[[".scenario"]]), " ordered scenarios"), y = stats)
+  if (ff) {
+    gg <- gg +
+      ggplot2::labs(x = paste0(paste(vapply(X = by, FUN = function(x) length(levels(data[[x]])), FUN.VALUE = numeric(1)), collapse = " x "), " = ", length(unique(data[[".scenario"]])), " ordered scenarios"), y = stats)
+  } else {
+    gg <- gg +
+      ggplot2::labs(x = paste0(num_ff, " ordered scenarios"), y = stats)
+  }
 
   ### Build and add legends of nested loop plot
   for (i in seq_along(by)) {
@@ -361,7 +401,7 @@
       ggplot2::geom_hex(show.legend = density.legend)
   } else {
     gg <- gg +
-      ggplot2::stat_density_2d(mapping = ggplot2::aes(fill = stat(level)), geom = "polygon", show.legend = density.legend)
+      ggplot2::stat_density_2d(mapping = ggplot2::aes(fill = after_stat(level)), geom = "polygon", show.legend = density.legend)
   }
 
   ### Add reference line

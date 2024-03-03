@@ -1,12 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# rsimsum <img src="man/figures/hex.png" width = "150" align="right" />
+# {rsimsum}: Analysis of Simulation Studies Including Monte Carlo Error <img src="man/figures/hex.png" width = "200" align="right" />
 
 <!-- badges: start -->
 
-[![R Build
-Status](https://github.com/ellessenne/rsimsum/workflows/R-CMD-check/badge.svg)](https://github.com/ellessenne/rsimsum/actions)
+[![R-CMD-check](https://github.com/ellessenne/rsimsum/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ellessenne/rsimsum/actions/workflows/R-CMD-check.yaml)
 [![Codecov Test
 Coverage](https://codecov.io/gh/ellessenne/rsimsum/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ellessenne/rsimsum?branch=master)
 [![CRAN
@@ -142,6 +141,10 @@ summary(s)
 #>               CC         MI_LOGT             MI_T
 #>  0.0168 (0.0048) 0.0009 (0.0042) -0.0012 (0.0043)
 #> 
+#> Relative bias in point estimate:
+#>               CC         MI_LOGT             MI_T
+#>  0.0335 (0.0096) 0.0018 (0.0083) -0.0024 (0.0085)
+#> 
 #> Empirical standard error:
 #>               CC         MI_LOGT            MI_T
 #>  0.1511 (0.0034) 0.1320 (0.0030) 0.1344 (0.0030)
@@ -160,7 +163,7 @@ summary(s)
 #> 
 #> Relative % error in standard error:
 #>                CC         MI_LOGT             MI_T
-#>  -2.6594 (2.2049) 2.2233 (2.3318) -0.4412 (2.2690)
+#>  -2.6594 (2.2055) 2.2233 (2.3323) -0.4412 (2.2695)
 #> 
 #> Coverage of nominal 95% confidence interval:
 #>               CC         MI_LOGT            MI_T
@@ -217,7 +220,7 @@ rewritten, and new plot types have been implemented:
 
 ``` r
 autoplot(s, type = "est_ba")
-#> `geom_smooth()` using formula 'y ~ x'
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
 <img src="man/figures/README-ba-1.png" width="85%" style="display: block; margin: auto;" />
@@ -250,14 +253,14 @@ been implemented as well:
 
 ``` r
 autoplot(s, type = "est_density")
-#> `geom_smooth()` using formula 'y ~ x'
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
 <img src="man/figures/README-density-1.png" width="85%" style="display: block; margin: auto;" />
 
 ``` r
 autoplot(s, type = "est_hex")
-#> `geom_smooth()` using formula 'y ~ x'
+#> `geom_smooth()` using formula = 'y ~ x'
 ```
 
 <img src="man/figures/README-hex-1.png" width="85%" style="display: block; margin: auto;" />
@@ -283,8 +286,7 @@ If you find `rsimsum` useful, please cite it in your publications:
 
 ``` r
 citation("rsimsum")
-#> 
-#> To cite the rsimsum package in publications, please use:
+#> To cite package 'rsimsum' in publications use:
 #> 
 #>   Gasparini, (2018). rsimsum: Summarise results from Monte Carlo simulation studies.
 #>   Journal of Open Source Software, 3(26), 739, https://doi.org/10.21105/joss.00739
@@ -307,11 +309,9 @@ citation("rsimsum")
 # References
 
 - White, I.R. 2010. *simsum: Analyses of simulation studies including
-  Monte Carlo error*. The Stata Journal 10(3): 369-385
-  \<<https://www.stata-journal.com/article.html?article=st0200>\>
+  Monte Carlo error*. The Stata Journal, 10(3): 369-385
 - Morris, T.P., White, I.R. and Crowther, M.J. 2019. *Using simulation
-  studies to evaluate statistical methods*. Statistics in Medicine,
-  \<[doi:10.1002/sim.8086](https://doi.org/10.1002/sim.8086)\>
+  studies to evaluate statistical methods*. Statistics in Medicine, 38:
+  2074-2102
 - Gasparini, A. 2018. *rsimsum: Summarise results from Monte Carlo
   simulation studies*. Journal of Open Source Software, 3(26):739
-  \<[10.21105/joss.00739](https://doi.org/10.21105/joss.00739)\>

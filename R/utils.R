@@ -87,13 +87,13 @@
 #' @keywords internal
 .describe <- function(x, ref, level) {
   description_df <- data.frame(
-    stat = c("nsim", "thetamean", "thetamedian", "se2mean", "se2median", "bias", "empse", "relprec", "mse", "modelse", "relerror", "cover", "becover", "power"),
-    description = c("Non-missing point estimates/standard errors", "Average point estimate", "Median point estimate", "Average variance", "Median variance", "Bias in point estimate", "Empirical standard error", paste("% gain in precision relative to method", ref), "Mean squared error", "Model-based standard error", "Relative % error in standard error", paste("Coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Bias-eliminated coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Power of", sprintf("%.0f%%", 100 * (1 - level)), "level test")),
+    stat = c("nsim", "thetamean", "thetamedian", "se2mean", "se2median", "bias", "rbias", "empse", "relprec", "mse", "modelse", "relerror", "cover", "becover", "power"),
+    description = c("Non-missing point estimates/standard errors", "Average point estimate", "Median point estimate", "Average variance", "Median variance", "Bias in point estimate", "Relative bias in point estimate", "Empirical standard error", paste("% gain in precision relative to method", ref), "Mean squared error", "Model-based standard error", "Relative % error in standard error", paste("Coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Bias-eliminated coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Power of", sprintf("%.0f%%", 100 * (1 - level)), "level test")),
     stringsAsFactors = FALSE
   )
   x <- merge(x, description_df, by = "stat")
   x <- x[, names(x)[names(x) != "stat"]]
-  x$description <- factor(x$description, levels = c("Non-missing point estimates/standard errors", "Average point estimate", "Median point estimate", "Average variance", "Median variance", "Bias in point estimate", "Empirical standard error", paste("% gain in precision relative to method", ref), "Mean squared error", "Model-based standard error", "Relative % error in standard error", paste("Coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Bias-eliminated coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Power of", sprintf("%.0f%%", 100 * (1 - level)), "level test")))
+  x$description <- factor(x$description, levels = c("Non-missing point estimates/standard errors", "Average point estimate", "Median point estimate", "Average variance", "Median variance", "Bias in point estimate", "Relative bias in point estimate", "Empirical standard error", paste("% gain in precision relative to method", ref), "Mean squared error", "Model-based standard error", "Relative % error in standard error", paste("Coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Bias-eliminated coverage of nominal", sprintf("%.0f%%", 100 * (level)), "confidence interval"), paste("Power of", sprintf("%.0f%%", 100 * (1 - level)), "level test")))
   x <- x[order(x$description), ]
   x <- x[, c("description", "est", names(x)[!(names(x) %in% c("description", "est"))])]
   return(x)
@@ -187,4 +187,27 @@
   internal_df <- .br(internal_df)
   ### Return
   return(internal_df)
+}
+
+### Drop split data.frame in 'data' with zero rows
+.drop_empty_splits <- function(data) {
+  data <- lapply(data, FUN = function(x) {
+    idx <- vapply(X = x, FUN = function(x) {
+      nrow(x) > 0
+    }, FUN.VALUE = logical(1))
+    x[idx]
+  })
+  nrs <- vapply(X = data, FUN = length, FUN.VALUE = numeric(1))
+  data <- data[nrs > 0]
+  return(data)
+}
+
+### Check private names
+.check_private <- function(var, label, private_names) {
+  if (!is.null(var)) {
+    if (any(var %in% private_names)) {
+      this <- which(var %in% private_names)
+      stop(paste0("'", var[this], "' is not an allowed name for '", label, "'; see help('simsum') for more details."), call. = FALSE)
+    }
+  }
 }
